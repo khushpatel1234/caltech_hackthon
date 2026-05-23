@@ -68,7 +68,7 @@ class PatientBiomarkers(Base):
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
 # Instantiate Database Tables
-Base.metadata.create_dir(engine) if "sqlite" in SQLALCHEMY_DATABASE_URL else Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 # Dependency to yield database sessions
 def get_db():

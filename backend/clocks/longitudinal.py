@@ -1,5 +1,6 @@
 import sys
 import os
+import math
 import datetime
 import numpy as np
 from typing import Dict, Any, List, Optional
@@ -10,6 +11,26 @@ import ruptures as rpt
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from clocks.panel import CLOCK_RELIABILITIES, STAR_SCORING
+
+def safe_float(val: Any, fallback: float = 0.0) -> float:
+    """Returns a JSON-safe float, replacing nan/inf with fallback."""
+    try:
+        f = float(val)
+        return fallback if (math.isnan(f) or math.isinf(f)) else f
+    except Exception:
+        return fallback
+
+def sanitize_for_json(obj: Any) -> Any:
+    """Recursively replaces nan/inf floats in dicts/lists so JSON serialization never fails."""
+    if isinstance(obj, dict):
+        return {k: sanitize_for_json(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [sanitize_for_json(v) for v in obj]
+    if isinstance(obj, float):
+        return safe_float(obj)
+    if isinstance(obj, np.floating):
+        return safe_float(float(obj))
+    return obj
 
 def parse_date(date_val: Any) -> float:
     """Parses a date or float representation to numeric days since baseline."""
@@ -43,18 +64,18 @@ def fit_linear_trajectory(x: np.ndarray, y: np.ndarray) -> Dict[str, Any]:
         }
     
     slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
-    
+
     # Calculate 95% CI of the slope using t-distribution critical values
     t_val = stats.t.ppf(0.975, df=max(1, n - 2))
-    ci_half = t_val * std_err if not np.isnan(std_err) else 0.0
-    
+    ci_half = t_val * std_err if (not np.isnan(std_err) and not np.isinf(std_err)) else 0.0
+
     return {
-        "slope": float(round(slope, 4)),
-        "intercept": float(round(intercept, 4)),
-        "slope_ci_low": float(round(slope - ci_half, 4)),
-        "slope_ci_high": float(round(slope + ci_half, 4)),
-        "p_value": float(round(p_value, 6)),
-        "r_squared": float(round(r_value ** 2, 4))
+        "slope": safe_float(round(slope, 4)),
+        "intercept": safe_float(round(intercept, 4)),
+        "slope_ci_low": safe_float(round(slope - ci_half, 4)),
+        "slope_ci_high": safe_float(round(slope + ci_half, 4)),
+        "p_value": safe_float(round(p_value, 6), fallback=1.0),
+        "r_squared": safe_float(round(r_value ** 2, 4))
     }
 
 def analyze_longitudinal_trajectory(
@@ -239,7 +260,7 @@ def analyze_longitudinal_trajectory(
             "ci_high": float(round(-delta_accel + 1.96 * se_delta, 2))
         }
 
-    return {
+    return sanitize_for_json({
         "per_clock_trajectories": per_clock_trajectories,
         "bayes_consensus_trajectory": consensus_trajectory,
         "changepoint": {
@@ -248,4 +269,4 @@ def analyze_longitudinal_trajectory(
             "confidence": confidence_score
         },
         "attribution": attribution
-    }
+    })

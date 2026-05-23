@@ -2,23 +2,25 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { 
-  Sparkles, 
-  Activity, 
-  Heart, 
-  ChevronLeft, 
-  AlertTriangle, 
-  CheckCircle2, 
-  Info, 
-  FileText, 
-  TrendingDown, 
+import { ThemeToggle } from "../../components/ThemeToggle";
+import {
+  Sparkles,
+  Activity,
+  Heart,
+  ChevronLeft,
+  AlertTriangle,
+  CheckCircle2,
+  Info,
+  FileText,
+  TrendingDown,
   FlaskConical,
   Shield,
   Clock,
   Send,
   ChevronDown,
   ChevronUp,
-  ExternalLink
+  ExternalLink,
+  PlusCircle
 } from "lucide-react";
 import { 
   ResponsiveContainer, 
@@ -100,13 +102,19 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
   const [displayAge, setDisplayAge] = useState<number>(0);
   const [whyThisChangedOpen, setWhyThisChangedOpen] = useState(false);
 
+  const [showAddIntervention, setShowAddIntervention] = useState(false);
+  const [newIntervention, setNewIntervention] = useState({ name: "Rapamycin 5mg/week", start_date: "Month 0" });
+  const [addingIntervention, setAddingIntervention] = useState(false);
+  const [interventionError, setInterventionError] = useState<string | null>(null);
+  const [interventionSuccess, setInterventionSuccess] = useState(false);
+
   const handleQuestionChange = async (question: "general" | "mortality" | "cardiovascular" | "cognitive" | "metabolic" | "cancer") => {
     setActiveQuestion(question);
     
     try {
       const apiHost = typeof window !== 'undefined' 
-        ? window.location.origin.replace(':3000', ':8000') 
-        : 'http://localhost:8000';
+        ? window.location.origin.replace(':3000', ':8002') 
+        : 'http://localhost:8002';
       
       const res = await fetch(`${apiHost}/api/patient/${patientId}/consensus?question=${question}`);
       if (res.ok) {
@@ -151,8 +159,8 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
     async function fetchEvidence() {
       try {
         const apiHost = typeof window !== 'undefined' 
-          ? window.location.origin.replace(':3000', ':8000') 
-          : 'http://localhost:8000';
+          ? window.location.origin.replace(':3000', ':8002') 
+          : 'http://localhost:8002';
         const res = await fetch(`${apiHost}/api/clocks/evidence`);
         if (res.ok) {
           const json = await res.json();
@@ -173,8 +181,8 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
 
     try {
       const apiHost = typeof window !== 'undefined' 
-        ? window.location.origin.replace(':3000', ':8000') 
-        : 'http://localhost:8000';
+        ? window.location.origin.replace(':3000', ':8002') 
+        : 'http://localhost:8002';
       const res = await fetch(`${apiHost}/api/patient/${patientId}/followup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -234,8 +242,8 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
       try {
         // Dynamic origin lookup to adapt flawlessly to Sandbox environment or standard localports
         const apiHost = typeof window !== 'undefined' 
-          ? window.location.origin.replace(':3000', ':8000') 
-          : 'http://localhost:8000';
+          ? window.location.origin.replace(':3000', ':8002') 
+          : 'http://localhost:8002';
         
         const res = await fetch(`${apiHost}/api/patient/${patientId}`);
         if (!res.ok) {
@@ -260,8 +268,8 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
       setTrajectoryError(null);
       try {
         const apiHost = typeof window !== 'undefined' 
-          ? window.location.origin.replace(':3000', ':8000') 
-          : 'http://localhost:8000';
+          ? window.location.origin.replace(':3000', ':8002') 
+          : 'http://localhost:8002';
         
         const res = await fetch(`${apiHost}/api/patient/${patientId}/trajectory`);
         if (!res.ok) {
@@ -285,12 +293,12 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col justify-center items-center gap-4">
+      <div className="min-h-screen bg-slate-50 dark:bg-neutral-950 text-slate-900 dark:text-neutral-100 flex flex-col justify-center items-center gap-4">
         <div className="relative flex items-center justify-center">
           <div className="w-16 h-16 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
           <Activity size={20} className="text-emerald-400 absolute animate-pulse" />
         </div>
-        <div className="text-sm font-mono tracking-widest text-neutral-400 uppercase animate-pulse">
+        <div className="text-sm font-mono tracking-widest text-slate-600 dark:text-neutral-400 uppercase animate-pulse">
           Decrypting Epigenome & Metascores...
         </div>
       </div>
@@ -299,21 +307,21 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
 
   if (error || !data) {
     return (
-      <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col justify-center items-center px-6">
-        <div className="max-w-md w-full text-center space-y-6 bg-neutral-900/60 p-8 rounded-2xl border border-neutral-800 backdrop-blur-md">
+      <div className="min-h-screen bg-slate-50 dark:bg-neutral-950 text-slate-900 dark:text-neutral-100 flex flex-col justify-center items-center px-6">
+        <div className="max-w-md w-full text-center space-y-6 bg-white dark:bg-slate-100 dark:bg-neutral-900/60 p-8 rounded-2xl border border-slate-200 dark:border-neutral-800 backdrop-blur-md">
           <div className="bg-rose-500/10 w-12 h-12 rounded-full border border-rose-500/20 flex items-center justify-center mx-auto">
             <AlertTriangle className="text-rose-400 w-6 h-6" />
           </div>
           <div className="space-y-2">
-            <h3 className="font-bold text-lg text-white">Clinical Data Inaccessible</h3>
-            <p className="text-xs text-neutral-400 leading-normal">
+            <h3 className="font-bold text-lg text-slate-900 dark:text-slate-900 dark:text-white">Clinical Data Inaccessible</h3>
+            <p className="text-xs text-slate-600 dark:text-neutral-400 leading-normal">
               {error || "No experimental biomarkers have been found for the requested patient identifier."}
             </p>
           </div>
           <div className="pt-2">
-            <Link 
+            <Link
               href="/"
-              className="inline-flex items-center gap-1.5 text-xs font-mono font-bold bg-neutral-800 hover:bg-neutral-750 text-white px-4 py-2 rounded-xl transition cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-mono font-bold bg-neutral-800 hover:bg-neutral-750 text-slate-900 dark:text-white px-4 py-2 rounded-xl transition cursor-pointer"
             >
               <ChevronLeft size={14} /> Back to Entry Console
             </Link>
@@ -324,6 +332,7 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
   }
 
   const { patient, clocks_panel, ai_interpretation } = data;
+  const aiInterpretation = ai_interpretation;
   const chronoAge = patient.chronological_age;
   const lastVisitDate = patient.visits?.[patient.visits.length - 1]?.date || "N/A";
 
@@ -382,6 +391,7 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
       plot_low: plotLow,
       plot_high: plotHigh,
       isDecelerated,
+      isDunedin: name === "DunedinPACE",
       index: index, // Row coordinate for the YAxis
     };
   });
@@ -455,35 +465,69 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
     );
   };
 
+  const handleAddIntervention = async () => {
+    if (!newIntervention.name.trim()) return;
+    setAddingIntervention(true);
+    setInterventionError(null);
+    try {
+      const apiHost = typeof window !== 'undefined'
+        ? window.location.origin.replace(':3000', ':8002')
+        : 'http://localhost:8002';
+      const res = await fetch(`${apiHost}/api/patient/${patientId}/intervention`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newIntervention.name.trim(),
+          start_date: newIntervention.start_date,
+          end_date: null
+        })
+      });
+      if (!res.ok) throw new Error(`Failed: ${res.status}`);
+      setShowAddIntervention(false);
+      setInterventionSuccess(true);
+      setTimeout(() => setInterventionSuccess(false), 3000);
+      // Re-fetch patient data and trajectory
+      const profileRes = await fetch(`${apiHost}/api/patient/${patientId}`);
+      if (profileRes.ok) setData(await profileRes.json());
+      const trajRes = await fetch(`${apiHost}/api/patient/${patientId}/trajectory`);
+      if (trajRes.ok) setTrajectoryData(await trajRes.json());
+    } catch (err: any) {
+      setInterventionError(err.message || 'Failed to add intervention.');
+    } finally {
+      setAddingIntervention(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col justify-between selection:bg-emerald-500/30 selection:text-white">
+    <div className="min-h-screen bg-slate-50 dark:bg-neutral-950 text-slate-900 dark:text-neutral-100 flex flex-col justify-between selection:bg-emerald-500/30 selection:text-white transition-colors duration-200">
       {/* Visual Lighting Effect */}
       <div className="absolute top-0 right-1/4 w-[450px] h-[450px] bg-emerald-500/[0.04] rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-[20%] left-1/4 w-[450px] h-[450px] bg-cyan-500/[0.03] rounded-full blur-[140px] pointer-events-none" />
 
       {/* Embedded Clinician Navigation BAR */}
-      <header className="border-b border-neutral-900 bg-neutral-950/70 backdrop-blur-md sticky top-0 z-50">
+      <header className="border-b border-slate-200 dark:border-neutral-900 bg-white/80 dark:bg-neutral-950/70 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link 
+            <Link
               href="/"
-              className="flex items-center gap-1.5 text-xs font-mono font-medium text-neutral-400 hover:text-white transition group border border-neutral-850 bg-neutral-900/45 px-3 py-1.5 rounded-xl"
+              className="flex items-center gap-1.5 text-xs font-mono font-medium text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-slate-900 dark:text-white transition group border border-slate-200 dark:border-neutral-800 bg-slate-100/80 dark:bg-white dark:bg-neutral-900/45 px-3 py-1.5 rounded-xl"
             >
-              <ChevronLeft size={14} className="group-hover:-translate-x-0.5 transition" /> 
+              <ChevronLeft size={14} className="group-hover:-translate-x-0.5 transition" />
               Clinical Console
             </Link>
-            <Link 
+            <Link
               href="/cohort"
-              className="flex items-center gap-1.5 text-xs font-mono font-medium text-neutral-400 hover:text-white transition border border-neutral-850 bg-neutral-900/45 px-3 py-1.5 rounded-xl hover:text-emerald-400 hover:border-emerald-500/20"
+              className="flex items-center gap-1.5 text-xs font-mono font-medium text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-slate-900 dark:text-white transition border border-slate-200 dark:border-neutral-800 bg-slate-100/80 dark:bg-white dark:bg-neutral-900/45 px-3 py-1.5 rounded-xl hover:text-emerald-400 hover:border-emerald-500/20"
             >
               Cohort Registry
             </Link>
           </div>
           <div className="flex items-center gap-2">
             <FlaskConical className="text-emerald-400 w-5 h-5" />
-            <span className="font-mono text-xs font-bold tracking-widest text-neutral-400">
+            <span className="font-mono text-xs font-bold tracking-widest text-slate-500 dark:text-slate-600 dark:text-neutral-400">
               CHRONOS<span className="text-emerald-400 font-bold">LAYER</span> // CLINICAL REPORT
             </span>
+            <ThemeToggle />
           </div>
         </div>
       </header>
@@ -498,18 +542,18 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
           <div className="lg:col-span-8 space-y-8">
             
             {/* CLINICAL QUESTION SELECTOR */}
-            <div id="clinical-question-selector" className="bg-neutral-900/40 border border-neutral-850 p-6 rounded-2xl shadow-sm space-y-4">
+            <div id="clinical-question-selector" className="bg-white dark:bg-neutral-900/40 border border-slate-200 dark:border-neutral-800 p-6 rounded-2xl shadow-sm space-y-4">
               <div className="flex flex-col gap-1">
-                <span className="text-[10px] uppercase font-mono tracking-widest text-neutral-500 font-bold">
+                <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 dark:text-neutral-500 font-bold">
                   Optimize Consensus For:
                 </span>
-                <p className="text-xs text-neutral-400 font-sans">
+                <p className="text-xs text-slate-600 dark:text-neutral-400 font-sans">
                   Select a targeted clinical lens to dynamically reweight the multi-clock consensus.
                 </p>
               </div>
 
               {/* Horizontal Tab Strip */}
-              <div className="flex flex-wrap gap-2 border-b border-neutral-850 pb-2">
+              <div className="flex flex-wrap gap-2 border-b border-slate-200 dark:border-neutral-800 pb-2">
                 {(["general", "mortality", "cardiovascular", "cognitive", "metabolic", "cancer"] as const).map((q) => (
                   <button
                     key={q}
@@ -518,7 +562,7 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                     className={`px-3 py-2 rounded-lg text-xs font-mono font-bold tracking-wider uppercase transition relative cursor-pointer ${
                       activeQuestion === q
                         ? "text-emerald-400 bg-emerald-500/5 shadow-inner"
-                        : "text-neutral-400 hover:text-neutral-200"
+                        : "text-slate-600 dark:text-neutral-400 hover:text-slate-800 dark:text-neutral-200"
                     }`}
                   >
                     <span>{q}</span>
@@ -530,10 +574,10 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
               </div>
 
               {/* Rationale Text */}
-              <div className="bg-neutral-950/50 p-3.5 rounded-xl border border-neutral-850/60 flex items-start gap-2.5">
+              <div className="bg-slate-50 dark:bg-neutral-950/50 p-3.5 rounded-xl border border-slate-200 dark:border-neutral-800 flex items-start gap-2.5">
                 <Info size={16} className="text-emerald-400 shrink-0 mt-0.5" />
-                <p className="text-xs text-neutral-300 font-sans leading-relaxed">
-                  <span className="font-bold text-neutral-200 uppercase tracking-wide mr-1.5">{activeQuestion} Lens:</span>
+                <p className="text-xs text-slate-700 dark:text-neutral-300 font-sans leading-relaxed">
+                  <span className="font-bold text-slate-800 dark:text-neutral-200 uppercase tracking-wide mr-1.5">{activeQuestion} Lens:</span>
                   {rationaleText}
                 </p>
               </div>
@@ -543,12 +587,12 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
               
               {/* Patient Demographics Card */}
-              <div className="md:col-span-8 bg-neutral-900/45 border border-neutral-850 p-6 md:p-8 rounded-2xl relative overflow-hidden flex flex-col justify-between shadow-sm">
+              <div className="md:col-span-8 bg-white dark:bg-neutral-900/45 border border-slate-200 dark:border-neutral-800 p-6 md:p-8 rounded-2xl relative overflow-hidden flex flex-col justify-between shadow-sm">
             <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/[0.02] rounded-full blur-2xl pointer-events-none" />
             
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-2.5">
-                <span className="text-[10px] font-mono bg-neutral-850 text-neutral-400 border border-neutral-800 px-2.5 py-1 rounded-lg uppercase tracking-wider font-semibold">
+                <span className="text-[10px] font-mono bg-neutral-850 text-slate-600 dark:text-neutral-400 border border-neutral-800 px-2.5 py-1 rounded-lg uppercase tracking-wider font-semibold">
                   Patient Records // ID: {patientId.toUpperCase()}
                 </span>
                 <span className="text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/15 px-2.5 py-1 rounded-lg uppercase tracking-wider font-bold animate-pulse">
@@ -557,48 +601,60 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
               </div>
 
               <div className="space-y-1">
-                <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
+                <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                   {patient.name || `Case Study - ${patientId.toUpperCase()}`}
                 </h1>
-                <p className="text-xs text-neutral-400 font-sans max-w-xl">
+                <p className="text-xs text-slate-600 dark:text-neutral-400 font-sans max-w-xl">
                   Subject shows continuous longitudinal profiling for advanced physiological clocks. Metrics processed with inverse-variance weighted Bayesian modeling.
                 </p>
               </div>
 
               {/* Grid of details */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-neutral-850/80">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-slate-200 dark:border-neutral-800">
                 <div>
-                  <span className="block text-[10px] uppercase font-mono tracking-wider text-neutral-500 font-bold">Chronological Age</span>
-                  <span className="text-base font-semibold text-neutral-100 mt-1 block">{chronoAge.toFixed(1)} yr</span>
+                  <span className="block text-[10px] uppercase font-mono tracking-wider text-slate-500 dark:text-neutral-500 font-bold">Chronological Age</span>
+                  <span className="text-base font-semibold text-slate-900 dark:text-neutral-100 mt-1 block">{chronoAge.toFixed(1)} yr</span>
                 </div>
                 <div>
-                  <span className="block text-[10px] uppercase font-mono tracking-wider text-neutral-500 font-bold">Biological Age</span>
+                  <span className="block text-[10px] uppercase font-mono tracking-wider text-slate-500 dark:text-neutral-500 font-bold">Biological Age</span>
                   <span className="text-base font-semibold text-emerald-400 mt-1 block">
                     {displayAge.toFixed(1)} yr
-                    <span className="text-[11px] text-neutral-400 font-mono ml-1.5 block">
+                    <span className="text-[11px] text-slate-600 dark:text-neutral-400 font-mono ml-1.5 block">
                       CI [{ciLow.toFixed(1)}, {ciHigh.toFixed(1)}]
                     </span>
                   </span>
                 </div>
                 <div>
-                  <span className="block text-[10px] uppercase font-mono tracking-wider text-neutral-500 font-bold font-bold">Genetic Sex</span>
-                  <span className="text-base font-semibold text-neutral-100 mt-1 block">{patient.sex || "Unknown"}</span>
+                  <span className="block text-[10px] uppercase font-mono tracking-wider text-slate-500 dark:text-neutral-500 font-bold font-bold">Genetic Sex</span>
+                  <span className="text-base font-semibold text-slate-900 dark:text-neutral-100 mt-1 block">{patient.sex || "Unknown"}</span>
                 </div>
                 <div>
-                  <span className="block text-[10px] uppercase font-mono tracking-wider text-neutral-500 font-bold">Last Analysis Draw</span>
-                  <span className="text-base font-semibold text-neutral-100 mt-1 block font-mono">{lastVisitDate}</span>
+                  <span className="block text-[10px] uppercase font-mono tracking-wider text-slate-500 dark:text-neutral-500 font-bold">Last Analysis Draw</span>
+                  <span className="text-base font-semibold text-slate-900 dark:text-neutral-100 mt-1 block font-mono">{lastVisitDate}</span>
                 </div>
+              </div>
+
+              <div className="pt-3 border-t border-slate-200 dark:border-neutral-800 flex items-center justify-between">
+                <div className="text-[10px] font-mono text-slate-500 dark:text-neutral-500 uppercase tracking-wider">
+                  Active Programs: <span className="text-emerald-400 font-bold">{patient.interventions?.length || 0}</span>
+                </div>
+                <button
+                  onClick={() => setShowAddIntervention(true)}
+                  className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/15 border border-emerald-500/20 px-3 py-1.5 rounded-lg transition cursor-pointer"
+                >
+                  <PlusCircle size={12} /> Add Intervention
+                </button>
               </div>
             </div>
 
             {/* Dynamic visual indicator for overall aging acceleration */}
-            <div className="mt-8 border-t border-neutral-850 pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="mt-8 border-t border-slate-200 dark:border-neutral-800 pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
-                <div className="text-sm font-bold text-white flex items-center gap-1.5">
+                <div className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                   <Clock size={16} className="text-emerald-400" />
                   Bayesian Core Consensus
                 </div>
-                <div className="text-[11px] text-neutral-400 max-w-md">
+                <div className="text-[11px] text-slate-600 dark:text-neutral-400 max-w-md">
                   A comprehensive age consensus estimate. Lower numbers suggest optimal multi-cellular rejuvenation.
                 </div>
               </div>
@@ -624,9 +680,9 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                   </div>
                   <div className="space-y-1.5">
                     <span className="text-[9px] uppercase font-mono tracking-widest text-amber-400 font-semibold block">System Discordance Alarm</span>
-                    <h4 className="text-sm font-bold text-white uppercase">Unusual clock disagreement detected</h4>
-                    <p className="text-[11px] text-neutral-300 leading-relaxed font-sans mt-2">
-                      An extreme gap of <span className="text-amber-400 font-bold">{grimPhenoGap.toFixed(1)} years</span> is present between the Mortality-calibrated <strong className="text-neutral-100">GrimAge</strong> signal and Tissue-calibrated <strong className="text-neutral-100">PhenoAge</strong>.
+                    <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase">Unusual clock disagreement detected</h4>
+                    <p className="text-[11px] text-slate-700 dark:text-neutral-300 leading-relaxed font-sans mt-2">
+                      An extreme gap of <span className="text-amber-400 font-bold">{grimPhenoGap.toFixed(1)} years</span> is present between the Mortality-calibrated <strong className="text-slate-900 dark:text-neutral-100">GrimAge</strong> signal and Tissue-calibrated <strong className="text-slate-900 dark:text-neutral-100">PhenoAge</strong>.
                     </p>
                   </div>
                 </div>
@@ -643,8 +699,8 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                   </div>
                   <div className="space-y-1.5">
                     <span className="text-[9px] uppercase font-mono tracking-widest text-emerald-400 font-semibold block">Consensus Stability Validation</span>
-                    <h4 className="text-sm font-bold text-white uppercase">Clock outputs are within expected range</h4>
-                    <p className="text-[11px] text-neutral-400 leading-relaxed font-sans mt-2">
+                    <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase">Clock outputs are within expected range</h4>
+                    <p className="text-[11px] text-slate-600 dark:text-neutral-400 leading-relaxed font-sans mt-2">
                       The core epigenetic clocks reflect highly correlated biological dynamics. Variance across indicators is typical of healthy cohort profiles.
                     </p>
                   </div>
@@ -659,10 +715,10 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
         </div>
 
         {/* Why this changed disclosure panel */}
-        <div id="why-this-changed-panel" className="bg-neutral-900/40 border border-neutral-850 rounded-2xl overflow-hidden shadow-sm mt-6">
+        <div id="why-this-changed-panel" className="bg-white dark:bg-neutral-900/40 border border-slate-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm mt-6">
           <button
             onClick={() => setWhyThisChangedOpen(!whyThisChangedOpen)}
-            className="w-full px-6 py-4 flex items-center justify-between text-xs font-mono font-bold uppercase tracking-wider text-neutral-300 bg-neutral-900/10 hover:bg-neutral-900/20 transition cursor-pointer"
+            className="w-full px-6 py-4 flex items-center justify-between text-xs font-mono font-bold uppercase tracking-wider text-slate-700 dark:text-neutral-300 bg-white dark:bg-neutral-900/10 hover:bg-white dark:bg-neutral-900/20 transition cursor-pointer"
           >
             <span className="flex items-center gap-2">
               <Activity size={14} className="text-emerald-400" />
@@ -672,8 +728,8 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
           </button>
 
           {whyThisChangedOpen && (
-            <div className="p-6 border-t border-neutral-850 space-y-6 bg-neutral-950/20">
-              <p className="text-xs text-neutral-400 leading-normal font-sans">
+            <div className="p-6 border-t border-slate-200 dark:border-neutral-800 space-y-6 bg-neutral-950/20">
+              <p className="text-xs text-slate-600 dark:text-neutral-400 leading-normal font-sans">
                 Under the <strong className="text-emerald-400 uppercase">{activeQuestion}</strong> lens, the consensus age shifts from simple inverse-variance weighting to target-specific weights. Clocks with high relevance to {activeQuestion} are boosted while less congruent models are attenuated.
               </p>
 
@@ -686,21 +742,21 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                   const clockVal = clocksMap[name]?.value || (name === "DunedinPACE" ? 1.08 : chronoAge);
                   
                   return (
-                    <div key={name} className="space-y-1.5 group relative p-3 bg-neutral-900/15 border border-neutral-850/50 rounded-xl hover:border-neutral-800 transition">
+                    <div key={name} className="space-y-1.5 group relative p-3 bg-white dark:bg-neutral-900/15 border border-slate-200 dark:border-neutral-800 rounded-xl hover:border-neutral-800 transition">
                       <div className="flex items-center justify-between text-[11px] font-mono">
-                        <span className="flex items-center gap-1.5 font-bold text-neutral-200">
+                        <span className="flex items-center gap-1.5 font-bold text-slate-800 dark:text-neutral-200">
                           <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: clockColor }} />
                           {name}
                         </span>
-                        <div className="flex items-center gap-2 text-neutral-400">
-                          <span>Reading: <strong className="text-neutral-100">{clockVal.toFixed(name === "DunedinPACE" ? 2 : 1)}</strong></span>
+                        <div className="flex items-center gap-2 text-slate-600 dark:text-neutral-400">
+                          <span>Reading: <strong className="text-slate-900 dark:text-neutral-100">{clockVal.toFixed(name === "DunedinPACE" ? 2 : 1)}</strong></span>
                           <span>•</span>
                           <span>Weight: <strong className="text-emerald-400">{pct.toFixed(1)}%</strong></span>
                         </div>
                       </div>
                       
                       {/* Progress Bar Container */}
-                      <div className="w-full bg-neutral-950 h-2.5 rounded-full overflow-hidden relative">
+                      <div className="w-full bg-slate-200 dark:bg-neutral-950 h-2.5 rounded-full overflow-hidden relative">
                         <div 
                           className="h-full rounded-full transition-all duration-700 ease-out"
                           style={{ 
@@ -711,7 +767,7 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                       </div>
 
                       {/* Tooltip detail style */}
-                      <div className="text-[10px] text-neutral-500 font-mono flex items-center justify-between">
+                      <div className="text-[10px] text-slate-500 dark:text-neutral-500 font-mono flex items-center justify-between">
                         <span>Contribution:</span>
                         <span className="text-emerald-400 font-bold">{contrib.toFixed(1)} {name === "DunedinPACE" ? "?/s" : "yr"}</span>
                       </div>
@@ -724,14 +780,14 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
         </div>
 
         {/* TAB NAVIGATION ELEMENT */}
-        <div className="border-b border-neutral-900 pb-px flex items-center justify-between">
-          <div className="flex gap-1 bg-neutral-900/40 p-1 rounded-xl border border-neutral-850">
+        <div className="border-b border-slate-200 dark:border-neutral-900 pb-px flex items-center justify-between">
+          <div className="flex gap-1 bg-white dark:bg-neutral-900/40 p-1 rounded-xl border border-slate-200 dark:border-neutral-800">
             <button
               onClick={() => setSelectedTab("assessment")}
               className={`px-4 py-2 rounded-lg text-xs font-mono font-medium transition cursor-pointer flex items-center gap-1.5 ${
                 selectedTab === "assessment"
-                  ? "bg-neutral-800 text-white shadow"
-                  : "text-neutral-400 hover:text-neutral-200"
+                  ? "bg-neutral-800 text-slate-900 dark:text-white shadow"
+                  : "text-slate-600 dark:text-neutral-400 hover:text-slate-800 dark:text-neutral-200"
               }`}
             >
               <Activity size={14} className={selectedTab === "assessment" ? "text-emerald-400" : ""} />
@@ -741,8 +797,8 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
               onClick={() => setSelectedTab("trajectory")}
               className={`px-4 py-2 rounded-lg text-xs font-mono font-medium transition cursor-pointer flex items-center gap-1.5 ${
                 selectedTab === "trajectory"
-                  ? "bg-neutral-800 text-white shadow"
-                  : "text-neutral-400 hover:text-neutral-200"
+                  ? "bg-neutral-800 text-slate-900 dark:text-white shadow"
+                  : "text-slate-600 dark:text-neutral-400 hover:text-slate-800 dark:text-neutral-200"
               }`}
             >
               <TrendingDown size={14} className={selectedTab === "trajectory" ? "text-emerald-400 animate-pulse" : ""} />
@@ -750,7 +806,7 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
             </button>
           </div>
           
-          <div className="hidden sm:flex items-center gap-1.5 text-[10px] font-mono text-neutral-500 bg-neutral-950 px-3 py-1.5 rounded-lg border border-neutral-900">
+          <div className="hidden sm:flex items-center gap-1.5 text-[10px] font-mono text-slate-500 dark:text-neutral-500 bg-slate-100 dark:bg-neutral-950 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-neutral-900">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             <span>Interactive Clinician Active Workspace</span>
           </div>
@@ -759,20 +815,20 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
         {selectedTab === "assessment" && (
           <>
             {/* ROW 2: Forest Plot of Epigenetic Clocks */}
-            <div className="bg-neutral-900/40 border border-neutral-850 rounded-2xl p-6 md:p-8 shadow-sm">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-neutral-850/70 mb-6">
+            <div className="bg-white dark:bg-neutral-900/40 border border-slate-200 dark:border-neutral-800 rounded-2xl p-6 md:p-8 shadow-sm">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200 dark:border-neutral-800 mb-6">
             <div className="space-y-1">
-              <h3 className="text-base font-bold text-white">EPIGENETIC CLOCK SPECTRUM</h3>
-              <p className="text-xs text-neutral-400 max-w-xl">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">EPIGENETIC CLOCK SPECTRUM</h3>
+              <p className="text-xs text-slate-600 dark:text-neutral-400 max-w-xl">
                 Horizontal forest plot tracking individual clock estimates together with confidence interval whiskers (representing published ±1.96 SD boundaries).
               </p>
             </div>
             {/* Legend Indicators */}
             <div className="flex flex-wrap items-center gap-4 text-[10px] font-mono">
-              <span className="flex items-center gap-1.5 text-neutral-400">
+              <span className="flex items-center gap-1.5 text-slate-600 dark:text-neutral-400">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Decelerated
               </span>
-              <span className="flex items-center gap-1.5 text-neutral-400">
+              <span className="flex items-center gap-1.5 text-slate-600 dark:text-neutral-400">
                 <span className="w-2.5 h-2.5 rounded-full bg-rose-500" /> Accelerated
               </span>
               <span className="flex items-center gap-1.5 text-orange-500">
@@ -832,13 +888,13 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                           const p = payload[0].payload;
                           const labelSuffix = p.isDunedin ? " /yr" : " yrs";
                           return (
-                            <div className="bg-neutral-900 border border-neutral-800 p-3 rounded-xl shadow-xl font-mono text-[10px] space-y-1.5">
-                              <span className="font-bold text-white text-xs block border-b border-neutral-850 pb-1">{p.name}</span>
+                            <div className="bg-slate-100 dark:bg-neutral-900 border border-neutral-800 p-3 rounded-xl shadow-xl font-mono text-[10px] space-y-1.5">
+                              <span className="font-bold text-slate-900 dark:text-white text-xs block border-b border-slate-200 dark:border-neutral-800 pb-1">{p.name}</span>
                               <div className="text-neutral-350">
-                                <div>Value: <span className="text-white font-bold">{p.value.toFixed(2)}{labelSuffix}</span></div>
-                                <div>Low Bounds: <span className="text-neutral-400">{p.low.toFixed(2)}{labelSuffix}</span></div>
-                                <div>High Bounds: <span className="text-neutral-400">{p.high.toFixed(2)}{labelSuffix}</span></div>
-                                <div className="mt-1 pt-1 border-t border-neutral-850 text-neutral-400 capitalize">
+                                <div>Value: <span className="text-slate-900 dark:text-white font-bold">{p.value.toFixed(2)}{labelSuffix}</span></div>
+                                <div>Low Bounds: <span className="text-slate-600 dark:text-neutral-400">{p.low.toFixed(2)}{labelSuffix}</span></div>
+                                <div>High Bounds: <span className="text-slate-600 dark:text-neutral-400">{p.high.toFixed(2)}{labelSuffix}</span></div>
+                                <div className="mt-1 pt-1 border-t border-slate-200 dark:border-neutral-800 text-slate-600 dark:text-neutral-400 capitalize">
                                   Aging Profile: <span className={p.isDecelerated ? "text-emerald-400 font-bold" : "text-rose-400 font-bold"}>
                                     {p.isDecelerated ? "Decelerating ⚡" : "Accelerating 📈"}
                                   </span>
@@ -860,8 +916,8 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
             </div>
 
             {/* Side Readout Panels for individual clocks */}
-            <div className="lg:col-span-4 bg-neutral-950 p-4 rounded-xl border border-neutral-850 space-y-3">
-              <span className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider block font-bold">Diagnostics Panel Readings</span>
+            <div className="lg:col-span-4 bg-slate-50 dark:bg-neutral-950 p-4 rounded-xl border border-slate-200 dark:border-neutral-800 space-y-3">
+              <span className="text-[10px] uppercase font-mono text-slate-500 dark:text-neutral-500 tracking-wider block font-bold">Diagnostics Panel Readings</span>
               
               <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
                 {forestPlotData.map((clk) => {
@@ -871,13 +927,13 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                     : `${(clk.value - chronoAge) >= 0 ? '+' : ''}${(clk.value - chronoAge).toFixed(1)} yr`;
                   
                   return (
-                    <div key={clk.name} className="flex items-center justify-between text-xs py-1.5 border-b border-neutral-900 last:border-0 font-sans">
+                    <div key={clk.name} className="flex items-center justify-between text-xs py-1.5 border-b border-slate-200 dark:border-neutral-900 last:border-0 font-sans">
                       <div className="flex items-center gap-2">
                         <span className={`w-1.5 h-1.5 rounded-full ${clk.isDecelerated ? "bg-emerald-400" : "bg-rose-500"}`} />
-                        <span className="font-semibold text-neutral-200">{clk.name}</span>
+                        <span className="font-semibold text-slate-800 dark:text-neutral-200">{clk.name}</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className="text-[11px] font-mono text-neutral-400 font-medium">({clk.low.toFixed(1)} - {clk.high.toFixed(1)})</span>
+                        <span className="text-[11px] font-mono text-slate-600 dark:text-neutral-400 font-medium">({clk.low.toFixed(1)} - {clk.high.toFixed(1)})</span>
                         <span className={`font-mono text-[11px] font-extrabold px-1.5 py-0.5 rounded ${
                           clk.isDecelerated ? "text-emerald-400 bg-emerald-500/10" : "text-rose-400 bg-rose-500/10"
                         }`}>
@@ -889,7 +945,7 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                 })}
               </div>
 
-              <div className="pt-2 text-[9px] font-mono text-neutral-550 border-t border-neutral-900 flex items-center gap-1">
+              <div className="pt-2 text-[9px] font-mono text-neutral-550 border-t border-slate-200 dark:border-neutral-900 flex items-center gap-1">
                 <Info size={10} />
                 <span>PACE equivalent biological year is plotted visually at current rate.</span>
               </div>
@@ -900,28 +956,28 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
         </div>
 
         {/* ROW 3: STAR Framework Scoring and Analysis Table */}
-        <div className="bg-neutral-900/40 border border-neutral-850 rounded-2xl p-6 md:p-8 shadow-sm">
+        <div className="bg-white dark:bg-neutral-900/40 border border-slate-200 dark:border-neutral-800 rounded-2xl p-6 md:p-8 shadow-sm">
           <div className="space-y-1 mb-6">
-            <h3 className="text-base font-bold text-white uppercase flex items-center gap-2">
+            <h3 className="text-base font-bold text-slate-900 dark:text-white uppercase flex items-center gap-2">
               <Sparkles size={16} className="text-emerald-400 animate-pulse" />
               S.T.A.R. Framework Assessment
             </h3>
-            <p className="text-xs text-neutral-400 max-w-xl">
+            <p className="text-xs text-slate-600 dark:text-neutral-400 max-w-xl">
               Provides weighted insights regarding stability, treatment responsiveness, phenotype associations, and clinical hazard profiles of individual methylation markers.
             </p>
           </div>
 
-          <div className="overflow-x-auto border border-neutral-855 rounded-xl bg-neutral-950/40">
+          <div className="overflow-x-auto border border-neutral-855 rounded-xl bg-slate-50 dark:bg-neutral-950/40">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-neutral-850 bg-neutral-950/80 font-mono text-[10px] text-neutral-400 uppercase tracking-wider">
-                  <th className="py-4 px-5 font-semibold text-neutral-300">Epigenetic Clock</th>
+                <tr className="border-b border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950/80 font-mono text-[10px] text-slate-600 dark:text-neutral-400 uppercase tracking-wider">
+                  <th className="py-4 px-5 font-semibold text-slate-700 dark:text-neutral-300">Epigenetic Clock</th>
                   
                   <th className="py-4 px-5 font-semibold text-center">
                     <div className="relative group inline-flex items-center gap-1 cursor-help justify-center">
                       <span>Stability</span>
                       <Info size={11} className="text-neutral-550" />
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 hidden group-hover:block bg-neutral-900 border border-neutral-800 text-neutral-300 text-[10px] p-2.5 rounded-xl shadow-2xl normal-case font-normal leading-normal font-sans z-50">
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 hidden group-hover:block bg-slate-100 dark:bg-neutral-900 border border-neutral-800 text-slate-700 dark:text-neutral-300 text-[10px] p-2.5 rounded-xl shadow-2xl normal-case font-normal leading-normal font-sans z-50">
                         Signal-to-noise reproducibility under physical extraction or repeat profiling draws.
                       </div>
                     </div>
@@ -931,7 +987,7 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                     <div className="relative group inline-flex items-center gap-1 cursor-help justify-center">
                       <span>Treatment Responsiveness</span>
                       <Info size={11} className="text-neutral-550" />
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 hidden group-hover:block bg-neutral-900 border border-neutral-800 text-neutral-300 text-[10px] p-2.5 rounded-xl shadow-2xl normal-case font-normal leading-normal font-sans z-50">
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 hidden group-hover:block bg-slate-100 dark:bg-neutral-900 border border-neutral-800 text-slate-700 dark:text-neutral-300 text-[10px] p-2.5 rounded-xl shadow-2xl normal-case font-normal leading-normal font-sans z-50">
                         Promptness of the metric to decelerate under clinical exercise, nutrition, or rapamycin therapy.
                       </div>
                     </div>
@@ -941,7 +997,7 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                     <div className="relative group inline-flex items-center gap-1 cursor-help justify-center">
                       <span>Associations</span>
                       <Info size={11} className="text-neutral-550" />
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 hidden group-hover:block bg-neutral-900 border border-neutral-800 text-neutral-300 text-[10px] p-2.5 rounded-xl shadow-2xl normal-case font-normal leading-normal font-sans z-50">
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 hidden group-hover:block bg-slate-100 dark:bg-neutral-900 border border-neutral-800 text-slate-700 dark:text-neutral-300 text-[10px] p-2.5 rounded-xl shadow-2xl normal-case font-normal leading-normal font-sans z-50">
                         Correlation strength of clock values with true cell phenotype and physiological organ metrics.
                       </div>
                     </div>
@@ -951,41 +1007,41 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                     <div className="relative group inline-flex items-center gap-1 cursor-help justify-center">
                       <span>Risk</span>
                       <Info size={11} className="text-neutral-550" />
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 hidden group-hover:block bg-neutral-900 border border-neutral-800 text-neutral-300 text-[10px] p-2.5 rounded-xl shadow-2xl normal-case font-normal leading-normal font-sans z-50">
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 hidden group-hover:block bg-slate-100 dark:bg-neutral-900 border border-neutral-800 text-slate-700 dark:text-neutral-300 text-[10px] p-2.5 rounded-xl shadow-2xl normal-case font-normal leading-normal font-sans z-50">
                         Longevity hazard calibration representing relative correlation limits with morbidity/mortality risk.
                       </div>
                     </div>
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-900 text-xs">
+              <tbody className="divide-y divide-slate-200 dark:divide-neutral-900 text-xs">
                 {CLOCK_LABELS.map((name) => {
                   const scores = STAR_SCORING[name] || { "Stability": 0.5, "Treatment-Responsiveness": 0.5, "Associations": 0.5, "Risk": 0.5 };
                   return (
-                    <tr key={name} className="hover:bg-neutral-900/40 transition">
-                      <td className="py-4 px-5 font-bold text-neutral-200 font-mono">{name}</td>
+                    <tr key={name} className="hover:bg-white dark:bg-neutral-900/40 transition">
+                      <td className="py-4 px-5 font-bold text-slate-800 dark:text-neutral-200 font-mono">{name}</td>
                       <td className="py-4 px-5">
                         <div className="flex flex-col items-center justify-center gap-1">
                           {renderStarIndicator(scores["Stability"])}
-                          <span className="text-[9px] text-neutral-500 font-mono">{(scores["Stability"] * 10).toFixed(1)}</span>
+                          <span className="text-[9px] text-slate-500 dark:text-neutral-500 font-mono">{(scores["Stability"] * 10).toFixed(1)}</span>
                         </div>
                       </td>
                       <td className="py-4 px-5">
                         <div className="flex flex-col items-center justify-center gap-1">
                           {renderStarIndicator(scores["Treatment-Responsiveness"])}
-                          <span className="text-[9px] text-neutral-500 font-mono">{(scores["Treatment-Responsiveness"] * 10).toFixed(1)}</span>
+                          <span className="text-[9px] text-slate-500 dark:text-neutral-500 font-mono">{(scores["Treatment-Responsiveness"] * 10).toFixed(1)}</span>
                         </div>
                       </td>
                       <td className="py-4 px-5">
                         <div className="flex flex-col items-center justify-center gap-1">
                           {renderStarIndicator(scores["Associations"])}
-                          <span className="text-[9px] text-neutral-500 font-mono">{(scores["Associations"] * 10).toFixed(1)}</span>
+                          <span className="text-[9px] text-slate-500 dark:text-neutral-500 font-mono">{(scores["Associations"] * 10).toFixed(1)}</span>
                         </div>
                       </td>
                       <td className="py-4 px-5">
                         <div className="flex flex-col items-center justify-center gap-1">
                           {renderStarIndicator(scores["Risk"])}
-                          <span className="text-[9px] text-neutral-500 font-mono">{(scores["Risk"] * 10).toFixed(1)}</span>
+                          <span className="text-[9px] text-slate-500 dark:text-neutral-500 font-mono">{(scores["Risk"] * 10).toFixed(1)}</span>
                         </div>
                       </td>
                     </tr>
@@ -995,10 +1051,10 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
             </table>
           </div>
 
-          <div className="mt-4 flex gap-2.5 items-start bg-neutral-950/60 p-4 border border-neutral-900 rounded-xl">
+          <div className="mt-4 flex gap-2.5 items-start bg-slate-100 dark:bg-neutral-950/60 p-4 border border-slate-200 dark:border-neutral-900 rounded-xl">
             <Shield className="text-emerald-500 w-5 h-5 shrink-0 mt-0.5" />
-            <div className="text-[11px] text-neutral-400 leading-relaxed font-sans">
-              <strong className="text-neutral-200">STAR Scoring Translation:</strong> Filled bars represent 25% intervals. Ratings compiled dynamically based on systematic review of epigenetic research archives (e.g. standard Hannum and Horvath iterations represent highly reproducible technical methylation arrays, while GrimAge and DunedinPACE show maximum dynamic signal response to interventions and disease risk profiles).
+            <div className="text-[11px] text-slate-600 dark:text-neutral-400 leading-relaxed font-sans">
+              <strong className="text-slate-800 dark:text-neutral-200">STAR Scoring Translation:</strong> Filled bars represent 25% intervals. Ratings compiled dynamically based on systematic review of epigenetic research archives (e.g. standard Hannum and Horvath iterations represent highly reproducible technical methylation arrays, while GrimAge and DunedinPACE show maximum dynamic signal response to interventions and disease risk profiles).
             </div>
           </div>
 
@@ -1010,14 +1066,14 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
         {selectedTab === "trajectory" && (
           <div className="space-y-8 animate-fade-in">
             {/* Trajectory Main Block */}
-            <div className="bg-neutral-900/40 border border-neutral-850 rounded-2xl p-6 md:p-8 shadow-sm">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-neutral-850/70 mb-6 font-mono">
+            <div className="bg-white dark:bg-neutral-900/40 border border-slate-200 dark:border-neutral-800 rounded-2xl p-6 md:p-8 shadow-sm">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200 dark:border-neutral-800 mb-6 font-mono">
                 <div className="space-y-1 font-sans">
-                  <h3 className="text-base font-bold text-white uppercase flex items-center gap-2">
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white uppercase flex items-center gap-2">
                     <TrendingDown size={18} className="text-emerald-400" />
                     Longitudinal Trajectory Mapping
                   </h3>
-                  <p className="text-xs text-neutral-400 max-w-xl">
+                  <p className="text-xs text-slate-600 dark:text-neutral-400 max-w-xl">
                     Multi-dimensional consensus profiling displaying true cellular rejuvenation alongside 7 distinct clock channels relative to therapy timelines.
                   </p>
                 </div>
@@ -1031,10 +1087,10 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
               {isTrajectoryLoading ? (
                 <div className="h-[400px] flex flex-col items-center justify-center gap-4">
                   <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
-                  <span className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase animate-pulse">Running Splines & Markov Chains...</span>
+                  <span className="text-[10px] font-mono tracking-widest text-slate-500 dark:text-neutral-500 uppercase animate-pulse">Running Splines & Markov Chains...</span>
                 </div>
               ) : trajectoryError ? (
-                <div className="h-[400px] flex items-center justify-center bg-neutral-950/40 border border-neutral-850 rounded-xl p-8 text-neutral-400 font-mono text-center text-xs">
+                <div className="h-[400px] flex items-center justify-center bg-slate-50 dark:bg-neutral-950/40 border border-slate-200 dark:border-neutral-800 rounded-xl p-8 text-slate-600 dark:text-neutral-400 font-mono text-center text-xs">
                   ⚠️ {trajectoryError}
                 </div>
               ) : (
@@ -1254,33 +1310,33 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                             if (active && payload && payload.length) {
                               const rawItem = payload[0].payload;
                               return (
-                                <div className="bg-neutral-900 border border-neutral-800 p-4 rounded-xl shadow-2xl font-mono text-[10px] space-y-2 min-w-[220px]">
-                                  <span className="font-bold text-white text-xs block border-b border-neutral-850 pb-1">{rawItem.visit}</span>
+                                <div className="bg-slate-100 dark:bg-neutral-900 border border-neutral-800 p-4 rounded-xl shadow-2xl font-mono text-[10px] space-y-2 min-w-[220px]">
+                                  <span className="font-bold text-slate-900 dark:text-white text-xs block border-b border-slate-200 dark:border-neutral-800 pb-1">{rawItem.visit}</span>
                                   <div className="space-y-1 text-neutral-350 font-mono">
                                     <div className="flex justify-between">
                                       <span>Age (Chrono):</span>
-                                      <span className="text-white font-bold">{rawItem.chronoAge.toFixed(1)} yr</span>
+                                      <span className="text-slate-900 dark:text-white font-bold">{rawItem.chronoAge.toFixed(1)} yr</span>
                                     </div>
                                     <div className="flex justify-between text-emerald-400">
                                       <span>Consensus:</span>
                                       <span className="font-extrabold">{rawItem.consensus.toFixed(1)} yr</span>
                                     </div>
-                                    <div className="flex justify-between text-neutral-400">
+                                    <div className="flex justify-between text-slate-600 dark:text-neutral-400">
                                       <span>95% CI:</span>
                                       <span>[{rawItem.ci_range[0].toFixed(1)} - {rawItem.ci_range[1].toFixed(1)}]</span>
                                     </div>
-                                    <div className="border-t border-neutral-850 mt-1.5 pt-1.5 space-y-1 font-sans">
+                                    <div className="border-t border-slate-200 dark:border-neutral-800 mt-1.5 pt-1.5 space-y-1 font-sans">
                                       {["Horvath", "Hannum", "PhenoAge", "GrimAge", "DunedinPACE", "ZhangAge", "CausAge"].map(clock => {
                                         if (!visibleClocks[clock]) return null;
                                         const color = CLOCK_COLORS[clock];
                                         const unscaledVal = rawItem[clock];
                                         return (
                                           <div key={clock} className="flex justify-between items-center text-[10px]">
-                                            <span className="flex items-center gap-1.5 font-medium text-neutral-300">
+                                            <span className="flex items-center gap-1.5 font-medium text-slate-700 dark:text-neutral-300">
                                               <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />
                                               {clock}:
                                             </span>
-                                            <span className="text-white font-mono font-bold">{unscaledVal?.toFixed(1)} yr</span>
+                                            <span className="text-slate-900 dark:text-white font-mono font-bold">{unscaledVal?.toFixed(1)} yr</span>
                                           </div>
                                         );
                                       })}
@@ -1305,12 +1361,12 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                       <div className="bg-amber-500/10 border border-amber-500/15 w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5">
                         <TrendingDown className="text-amber-400 w-5 h-5 animate-pulse" />
                       </div>
-                      <div className="space-y-1 text-neutral-300 font-sans">
+                      <div className="space-y-1 text-slate-700 dark:text-neutral-300 font-sans">
                         <span className="text-[10px] uppercase font-mono tracking-widest text-amber-500 font-bold block">Statistical Jump Detection</span>
-                        <h4 className="text-sm font-bold text-white uppercase leading-snug">
+                        <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase leading-snug">
                           Changepoint detected: month {trajectoryData?.changepoint?.visit ? parseFloat(trajectoryData.changepoint.visit.replace("Month ", "")).toFixed(1) : "6.2"} (confidence: {trajectoryData?.changepoint?.confidence ? Math.round(trajectoryData.changepoint.confidence * 100) : "87"}%)
                         </h4>
-                        <p className="text-[11px] text-neutral-400 leading-normal font-normal">
+                        <p className="text-[11px] text-slate-600 dark:text-neutral-400 leading-normal font-normal">
                           A non-linear Bayesian derivative shift occurred around visitMonth 6. Analysis confirms deceleration spline variance is highly robust.
                         </p>
                       </div>
@@ -1322,12 +1378,12 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                       <div className="bg-emerald-500/10 border border-emerald-500/15 w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5">
                         <Sparkles className="text-emerald-400 w-5 h-5 animate-pulse" />
                       </div>
-                      <div className="space-y-1 text-neutral-300 font-sans">
+                      <div className="space-y-1 text-slate-700 dark:text-neutral-300 font-sans">
                         <span className="text-[10px] uppercase font-mono tracking-widest text-emerald-400 font-bold block">Intervention Impact Metrics</span>
-                        <h4 className="text-sm font-bold text-white uppercase leading-snug">
+                        <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase leading-snug">
                           Attributed effect: GrimAge -{trajectoryData?.attribution?.rejuvenation_delta ? trajectoryData.attribution.rejuvenation_delta.toFixed(1) : "1.4"}y (95% CI: {trajectoryData?.attribution?.ci_low ? trajectoryData.attribution.ci_low.toFixed(1) : "-2.1"} to {trajectoryData?.attribution?.ci_high ? trajectoryData.attribution.ci_high.toFixed(1) : "-0.7"}) following {trajectoryData?.attribution?.attributed_programs ? trajectoryData.attribution.attributed_programs.join(", ").toLowerCase() : "rapamycin"} intervention
                         </h4>
-                        <p className="text-[11px] text-neutral-400 leading-normal font-normal">
+                        <p className="text-[11px] text-slate-600 dark:text-neutral-400 leading-normal font-normal">
                           The absolute slope of methylation aging decelerated significantly following the integration of cellular m-TOR therapeutics.
                         </p>
                       </div>
@@ -1336,11 +1392,11 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                   </div>
 
                   {/* Interaction Explorer Controls */}
-                  <div className="bg-neutral-950/80 rounded-xl border border-neutral-850 p-5 space-y-4">
-                    <div className="flex items-center justify-between border-b border-neutral-900 pb-2.5">
+                  <div className="bg-slate-50 dark:bg-neutral-950/80 rounded-xl border border-slate-200 dark:border-neutral-800 p-5 space-y-4">
+                    <div className="flex items-center justify-between border-b border-slate-200 dark:border-neutral-900 pb-2.5">
                       <div className="space-y-0.5">
-                        <span className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider block font-bold">Interactive Clock Layer Explorer</span>
-                        <p className="text-[11px] text-neutral-400 font-sans">Toggle each individual biological clock checkbox on/off to selectively hide/show its longitudinal track.</p>
+                        <span className="text-[10px] uppercase font-mono text-slate-500 dark:text-neutral-500 tracking-wider block font-bold">Interactive Clock Layer Explorer</span>
+                        <p className="text-[11px] text-slate-600 dark:text-neutral-400 font-sans">Toggle each individual biological clock checkbox on/off to selectively hide/show its longitudinal track.</p>
                       </div>
                       <button 
                         onClick={() => setVisibleClocks({
@@ -1361,8 +1417,8 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                             key={clock}
                             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[11px] font-mono font-medium cursor-pointer transition select-none ${
                               isChecked
-                                ? "bg-neutral-900 text-white border-neutral-750"
-                                : "bg-neutral-950/45 text-neutral-500 border-neutral-900 hover:border-neutral-800"
+                                ? "bg-slate-100 dark:bg-neutral-900 text-slate-900 dark:text-white border-neutral-750"
+                                : "bg-slate-50 dark:bg-neutral-950/45 text-slate-500 dark:text-neutral-500 border-slate-200 dark:border-neutral-900 hover:border-neutral-800"
                             }`}
                           >
                             <input 
@@ -1387,32 +1443,32 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
 
                   {/* Math slope details explorer */}
                   {trajectoryData?.per_clock_trajectories && (
-                    <div className="border border-neutral-850 bg-neutral-950/40 rounded-xl overflow-hidden mt-4">
-                      <div className="bg-neutral-950/85 border-b border-neutral-850 p-4">
-                        <span className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider font-bold block">Fitted Slope Linear Regression Diagnostics</span>
+                    <div className="border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950/40 rounded-xl overflow-hidden mt-4">
+                      <div className="bg-slate-50 dark:bg-neutral-950/85 border-b border-slate-200 dark:border-neutral-800 p-4">
+                        <span className="text-[10px] uppercase font-mono text-slate-500 dark:text-neutral-500 tracking-wider font-bold block">Fitted Slope Linear Regression Diagnostics</span>
                       </div>
                       <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse font-sans text-xs">
                           <thead>
-                            <tr className="border-b border-neutral-900 bg-neutral-955 text-neutral-450 uppercase tracking-wider text-[10px] font-mono">
-                              <th className="py-3 px-4 font-semibold text-neutral-300">Clock Label</th>
+                            <tr className="border-b border-slate-200 dark:border-neutral-900 bg-neutral-955 text-neutral-450 uppercase tracking-wider text-[10px] font-mono">
+                              <th className="py-3 px-4 font-semibold text-slate-700 dark:text-neutral-300">Clock Label</th>
                               <th className="py-3 px-4 font-semibold text-center">Fitted Slope (yr/mo)</th>
                               <th className="py-3 px-4 font-semibold text-center">95% Bounds</th>
                               <th className="py-3 px-4 font-semibold text-center">R² Score</th>
                               <th className="py-3 px-4 font-semibold text-center">Stat Significance</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-neutral-900 font-mono text-[11px] text-neutral-300">
+                          <tbody className="divide-y divide-slate-200 dark:divide-neutral-900 font-mono text-[11px] text-slate-700 dark:text-neutral-300">
                             {["Horvath", "Hannum", "PhenoAge", "GrimAge", "DunedinPACE", "ZhangAge", "CausAge"].map((clock) => {
                               const statsData = trajectoryData.per_clock_trajectories[clock];
                               if (!statsData) return null;
                               return (
-                                <tr key={clock} className="hover:bg-neutral-900/10 transition">
-                                  <td className="py-3 px-4 font-bold text-neutral-200">{clock}</td>
+                                <tr key={clock} className="hover:bg-white dark:bg-neutral-900/10 transition">
+                                  <td className="py-3 px-4 font-bold text-slate-800 dark:text-neutral-200">{clock}</td>
                                   <td className={`py-3 px-4 text-center font-extrabold ${statsData.slope <= 0 ? "text-emerald-400" : "text-rose-400"}`}>
                                     {statsData.slope >= 0 ? "+" : ""}{statsData.slope.toFixed(3)}
                                   </td>
-                                  <td className="py-3 px-4 text-center text-neutral-500">
+                                  <td className="py-3 px-4 text-center text-slate-500 dark:text-neutral-500">
                                     [{statsData.slope_ci_low.toFixed(3)} to {statsData.slope_ci_high.toFixed(3)}]
                                   </td>
                                   <td className="py-3 px-4 text-center">{statsData.r_squared.toFixed(2)}</td>
@@ -1438,18 +1494,18 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
 
           {/* RIGHT SIDEBAR: AI Clinical Assistant (lg:col-span-4) */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="bg-neutral-900/40 border border-neutral-850 rounded-2xl p-6 md:p-8 space-y-6 shadow-sm sticky top-24 font-sans">
+            <div className="bg-white dark:bg-neutral-900/40 border border-slate-200 dark:border-neutral-800 rounded-2xl p-6 md:p-8 space-y-6 shadow-sm sticky top-24 font-sans">
               
               {/* Header */}
-              <div className="flex items-center justify-between border-b border-neutral-850 pb-4">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-neutral-800 pb-4">
                 <div className="flex items-center gap-2">
                   <Sparkles className="text-emerald-400 animate-pulse shrink-0" size={18} />
                   <div>
                     <span className="text-[10px] font-mono uppercase text-emerald-400 tracking-wider block font-bold">AI Clinician Panel</span>
-                    <h3 className="text-base font-bold text-white uppercase font-sans">Clinical Assistant</h3>
+                    <h3 className="text-base font-bold text-slate-900 dark:text-white uppercase font-sans">Clinical Assistant</h3>
                   </div>
                 </div>
-                <span className="text-[9px] font-mono text-neutral-400 bg-neutral-950 px-2 py-1 rounded-md border border-neutral-900">
+                <span className="text-[9px] font-mono text-slate-600 dark:text-neutral-400 bg-slate-100 dark:bg-neutral-950 px-2 py-1 rounded-md border border-slate-200 dark:border-neutral-900">
                   Ready
                 </span>
               </div>
@@ -1460,10 +1516,10 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                   
                   {/* Clinician Interpretation Header/Summary */}
                   <div className="space-y-2">
-                    <span className="text-[10px] font-mono uppercase text-neutral-500 tracking-wider font-bold block">
+                    <span className="text-[10px] font-mono uppercase text-slate-500 dark:text-neutral-500 tracking-wider font-bold block">
                       Clinical Interpretation
                     </span>
-                    <div className="bg-neutral-950/60 p-4 rounded-xl border border-neutral-900 leading-relaxed">
+                    <div className="bg-slate-100 dark:bg-neutral-950/60 p-4 rounded-xl border border-slate-200 dark:border-neutral-900 leading-relaxed">
                       <p className="text-xs text-neutral-250 leading-relaxed font-sans font-normal">
                         {aiInterpretation.clinical_summary || "Interpretation engine initialized."}
                       </p>
@@ -1472,10 +1528,10 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
 
                   {/* Biological Story Badge */}
                   <div className="space-y-2">
-                    <span className="text-[10px] font-mono uppercase text-neutral-500 tracking-wider font-bold block">
+                    <span className="text-[10px] font-mono uppercase text-slate-500 dark:text-neutral-500 tracking-wider font-bold block">
                       Biological Story
                     </span>
-                    <div className="flex flex-col gap-2 bg-neutral-950/40 p-4 rounded-xl border border-neutral-900">
+                    <div className="flex flex-col gap-2 bg-slate-50 dark:bg-neutral-950/40 p-4 rounded-xl border border-slate-200 dark:border-neutral-900">
                       {(() => {
                         const storyText = aiInterpretation.biological_story || "";
                         const badge = getHallmarkBadge(storyText);
@@ -1485,9 +1541,9 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                               <span className={`px-2.5 py-1 rounded-md text-[9px] font-mono font-bold uppercase border tracking-wider ${badge.color}`}>
                                 {badge.label}
                               </span>
-                              <span className="text-[9px] font-mono text-neutral-500">Global Bio-Story Hallmark</span>
+                              <span className="text-[9px] font-mono text-slate-500 dark:text-neutral-500">Global Bio-Story Hallmark</span>
                             </div>
-                            <p className="text-[11px] text-neutral-400 font-sans leading-relaxed font-normal">
+                            <p className="text-[11px] text-slate-600 dark:text-neutral-400 font-sans leading-relaxed font-normal">
                               {storyText}
                             </p>
                           </>
@@ -1498,7 +1554,7 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
 
                   {/* Recommendations Section */}
                   <div className="space-y-3">
-                    <span className="text-[10px] font-mono uppercase text-neutral-500 tracking-wider font-bold block">
+                    <span className="text-[10px] font-mono uppercase text-slate-500 dark:text-neutral-500 tracking-wider font-bold block">
                       Therapeutic Recommendations ({aiInterpretation.recommendations?.length || 0})
                     </span>
 
@@ -1524,7 +1580,7 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                           <div 
                             key={idx}
                             className={`bg-neutral-955/40 border rounded-xl overflow-hidden transition-all duration-300 font-sans ${
-                              isExpanded ? "border-neutral-700 shadow-sm bg-neutral-900/30" : "border-neutral-850 hover:border-neutral-750"
+                              isExpanded ? "border-neutral-700 shadow-sm bg-white dark:bg-neutral-900/30" : "border-slate-200 dark:border-neutral-800 hover:border-neutral-750"
                             }`}
                           >
                             {/* Header Click to Expand */}
@@ -1534,7 +1590,7 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                             >
                               <div className="space-y-1 my-auto flex-grow">
                                 <div className="flex items-center gap-2 flex-wrap">
-                                  <h4 className="text-xs font-bold text-white tracking-tight">
+                                  <h4 className="text-xs font-bold text-slate-900 dark:text-white tracking-tight">
                                     {rec.intervention}
                                   </h4>
                                   <span className={`text-[8px] font-mono font-bold px-1.5 py-0.5 rounded leading-none shrink-0 ${gradeColor}`}>
@@ -1552,31 +1608,31 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                                 </div>
 
                                 {!isExpanded && (
-                                  <p className="text-[11px] text-neutral-400 font-sans leading-relaxed line-clamp-1 mt-1 font-normal italic">
+                                  <p className="text-[11px] text-slate-600 dark:text-neutral-400 font-sans leading-relaxed line-clamp-1 mt-1 font-normal italic">
                                     {rec.rationale}
                                   </p>
                                 )}
                               </div>
-                              <div className="pt-0.5 text-neutral-500 shrink-0">
+                              <div className="pt-0.5 text-slate-500 dark:text-neutral-500 shrink-0">
                                 {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                               </div>
                             </button>
 
                             {/* Expanded content */}
                             {isExpanded && (
-                              <div className="px-4 pb-4 pt-1 border-t border-neutral-900/60 space-y-3 font-sans text-[11px]">
+                              <div className="px-4 pb-4 pt-1 border-t border-slate-200 dark:border-neutral-900/60 space-y-3 font-sans text-[11px]">
                                 <div className="space-y-1">
-                                  <span className="text-[8.5px] uppercase font-mono tracking-widest text-neutral-500 block font-bold">Clinical Rationale</span>
-                                  <p className="text-neutral-300 leading-relaxed font-normal">{rec.rationale}</p>
+                                  <span className="text-[8.5px] uppercase font-mono tracking-widest text-slate-500 dark:text-neutral-500 block font-bold">Clinical Rationale</span>
+                                  <p className="text-slate-700 dark:text-neutral-300 leading-relaxed font-normal">{rec.rationale}</p>
                                 </div>
 
                                 {/* Progress value */}
                                 <div className="space-y-1 pt-1">
-                                  <div className="flex justify-between text-[8px] font-mono text-neutral-500 font-bold">
+                                  <div className="flex justify-between text-[8px] font-mono text-slate-500 dark:text-neutral-500 font-bold">
                                     <span>CLINICAL CONFIDENCE</span>
-                                    <span className="text-white">{((rec.confidence || 0.85) * 100).toFixed(0)}%</span>
+                                    <span className="text-slate-900 dark:text-white">{((rec.confidence || 0.85) * 100).toFixed(0)}%</span>
                                   </div>
-                                  <div className="w-full bg-neutral-955 h-1.5 rounded-full overflow-hidden border border-neutral-900">
+                                  <div className="w-full bg-neutral-955 h-1.5 rounded-full overflow-hidden border border-slate-200 dark:border-neutral-900">
                                     <div 
                                       className="bg-emerald-500 h-full rounded-full transition-all duration-500" 
                                       style={{ width: `${(rec.confidence || 0.85) * 100}%` }}
@@ -1586,12 +1642,12 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
 
                                 {/* Supporting citation with hyperlink */}
                                 {matchedStudy && (
-                                  <div className="bg-neutral-950/70 p-3 rounded-lg border border-neutral-900 mt-2 space-y-1 font-sans">
+                                  <div className="bg-slate-50 dark:bg-neutral-950/70 p-3 rounded-lg border border-slate-200 dark:border-neutral-900 mt-2 space-y-1 font-sans">
                                     <span className="text-[8px] uppercase font-mono tracking-wider text-emerald-400 block font-bold">
                                       Supporting Evidence Citation
                                     </span>
                                     <div className="flex items-start justify-between gap-3">
-                                      <span className="font-semibold text-neutral-200 text-[10px] leading-tight block">
+                                      <span className="font-semibold text-slate-800 dark:text-neutral-200 text-[10px] leading-tight block">
                                         {matchedStudy.citation}
                                       </span>
                                       <a 
@@ -1619,36 +1675,36 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
 
                 </div>
               ) : (
-                <div className="h-[200px] flex flex-col items-center justify-center gap-3 bg-neutral-950 p-6 rounded-xl border border-neutral-900">
+                <div className="h-[200px] flex flex-col items-center justify-center gap-3 bg-slate-50 dark:bg-neutral-950 p-6 rounded-xl border border-slate-200 dark:border-neutral-900">
                   <div className="w-8 h-8 border-2 border-emerald-500/25 border-t-emerald-500 rounded-full animate-spin" />
-                  <span className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase">Preloading Clinical Context...</span>
+                  <span className="text-[10px] font-mono tracking-widest text-slate-500 dark:text-neutral-500 uppercase">Preloading Clinical Context...</span>
                 </div>
               )}
 
               {/* Follow-up query section */}
-              <div className="border-t border-neutral-850 pt-5 space-y-4">
+              <div className="border-t border-slate-200 dark:border-neutral-800 pt-5 space-y-4">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-mono uppercase text-neutral-500 tracking-wider block font-bold">
+                  <span className="text-[10px] font-mono uppercase text-slate-500 dark:text-neutral-500 tracking-wider block font-bold">
                     Ask Follow-Up Question
                   </span>
-                  <p className="text-[11px] text-neutral-400 font-sans leading-normal">Query expert guidelines or therapeutic parameters for this subject.</p>
+                  <p className="text-[11px] text-slate-600 dark:text-neutral-400 font-sans leading-normal">Query expert guidelines or therapeutic parameters for this subject.</p>
                 </div>
 
                 {/* Answer logs */}
                 {followupHistory.length > 0 && (
-                  <div className="space-y-3.5 max-h-[220px] overflow-y-auto pr-1 border-b border-neutral-850 pb-4">
+                  <div className="space-y-3.5 max-h-[220px] overflow-y-auto pr-1 border-b border-slate-200 dark:border-neutral-800 pb-4">
                     {followupHistory.map((item) => (
-                      <div key={item.id} className="space-y-1.5 font-sans border-t border-neutral-900/60 first:border-0 pt-3 first:pt-0">
+                      <div key={item.id} className="space-y-1.5 font-sans border-t border-slate-200 dark:border-neutral-900/60 first:border-0 pt-3 first:pt-0">
                         <div className="flex items-start gap-1.5 text-[11.5px] text-cyan-300 font-semibold leading-snug">
                           <span className="font-bold shrink-0 text-cyan-500 font-mono text-xs font-bold">Q:</span>
                           <p>{item.question}</p>
                         </div>
-                        <div className="pl-3 py-1.5 border-l border-neutral-800 text-[11px] text-neutral-300 leading-relaxed font-sans space-y-2">
-                          <p className="font-normal font-sans text-neutral-300 leading-relaxed">{item.answer}</p>
+                        <div className="pl-3 py-1.5 border-l border-neutral-800 text-[11px] text-slate-700 dark:text-neutral-300 leading-relaxed font-sans space-y-2">
+                          <p className="font-normal font-sans text-slate-700 dark:text-neutral-300 leading-relaxed">{item.answer}</p>
                           {item.actions && item.actions.length > 0 && (
                             <div className="space-y-1.5 mt-2 font-sans">
                               <span className="text-[8.5px] uppercase font-mono tracking-wider text-emerald-400 font-bold block">Suggested Direct Actions:</span>
-                              <ul className="list-disc list-inside space-y-0.5 text-[10px] text-neutral-400 leading-normal">
+                              <ul className="list-disc list-inside space-y-0.5 text-[10px] text-slate-600 dark:text-neutral-400 leading-normal">
                                 {item.actions.map((act, ai) => (
                                   <li key={ai} className="font-sans font-normal">{act}</li>
                                 ))}
@@ -1663,7 +1719,7 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
 
                 {/* Copilot typing state */}
                 {isFollowupLoading && (
-                  <div className="bg-neutral-950/60 p-4 border border-neutral-900 rounded-xl space-y-2 animate-pulse font-sans">
+                  <div className="bg-slate-100 dark:bg-neutral-950/60 p-4 border border-slate-200 dark:border-neutral-900 rounded-xl space-y-2 animate-pulse font-sans">
                     <div className="flex items-center gap-2">
                       <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-ping" />
                       <span className="text-[9px] font-mono text-cyan-400 tracking-wider font-bold">SOLVING METABOLIC QUERY...</span>
@@ -1675,7 +1731,7 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
 
                 {/* Suggested prompt chips above input */}
                 <div className="space-y-1.5">
-                  <span className="text-[9px] font-mono text-neutral-500 block font-bold">Suggested Questions:</span>
+                  <span className="text-[9px] font-mono text-slate-500 dark:text-neutral-500 block font-bold">Suggested Questions:</span>
                   <div className="flex flex-col gap-1.5">
                     {(aiInterpretation?.follow_up_questions || [
                       "How does Rapamycin lower GrimAge?",
@@ -1685,7 +1741,7 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                       <button
                         key={qIdx}
                         onClick={() => submitQuestion(q)}
-                        className="text-[10px] text-left leading-tight bg-neutral-950/80 hover:bg-neutral-900 text-neutral-400 hover:text-white border border-neutral-905 hover:border-neutral-800 px-3 py-2 rounded-xl transition-all cursor-pointer font-sans font-normal"
+                        className="text-[10px] text-left leading-tight bg-slate-50 dark:bg-neutral-950/80 hover:bg-slate-200 dark:hover:bg-neutral-900 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white border border-neutral-905 hover:border-neutral-800 px-3 py-2 rounded-xl transition-all cursor-pointer font-sans font-normal"
                       >
                         {q}
                       </button>
@@ -1702,13 +1758,13 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                       onChange={(e) => setFollowupQuestion(e.target.value)}
                       placeholder="Ask about this patient..."
                       disabled={isFollowupLoading}
-                      className="w-full bg-neutral-955 border border-neutral-850 hover:border-neutral-800 focus:border-cyan-500 focus:outline-none text-xs text-white px-3.5 py-2.5 rounded-xl transition font-sans pr-8 placeholder:text-neutral-600 disabled:opacity-60 font-normal"
+                      className="w-full bg-neutral-955 border border-slate-200 dark:border-neutral-800 hover:border-neutral-800 focus:border-cyan-500 focus:outline-none text-xs text-slate-900 dark:text-white px-3.5 py-2.5 rounded-xl transition font-sans pr-8 placeholder:text-neutral-600 disabled:opacity-60 font-normal"
                     />
                     {followupQuestion && (
                       <button 
                         type="button"
                         onClick={() => setFollowupQuestion("")}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300 cursor-pointer text-xs p-1"
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 dark:text-neutral-500 hover:text-slate-700 dark:text-neutral-300 cursor-pointer text-xs p-1"
                       >
                         ✕
                       </button>
@@ -1730,13 +1786,80 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
         </div> {/* End Two-Column Cockpit Layout (outer grid) */}
       </main>
 
+      {/* Success Toast */}
+      {interventionSuccess && (
+        <div className="fixed bottom-6 right-6 z-50 bg-emerald-500 text-white text-xs font-bold px-4 py-3 rounded-xl shadow-lg font-mono animate-pulse">
+          ✓ Intervention added — trajectory regenerated
+        </div>
+      )}
+
+      {/* Add Intervention Modal */}
+      {showAddIntervention && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-slate-900 dark:text-white text-base font-sans">Add Clinical Intervention</h3>
+                <p className="text-xs text-slate-500 dark:text-neutral-400 mt-0.5">Adds to patient record and regenerates trajectory</p>
+              </div>
+              <button onClick={() => { setShowAddIntervention(false); setInterventionError(null); }} className="text-slate-400 dark:text-neutral-500 hover:text-slate-700 dark:hover:text-white text-xl font-bold leading-none">×</button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] uppercase font-mono font-bold text-slate-500 dark:text-neutral-400 tracking-wider block">Intervention / Protocol</label>
+                <input
+                  type="text"
+                  value={newIntervention.name}
+                  onChange={e => setNewIntervention(p => ({ ...p, name: e.target.value }))}
+                  placeholder="e.g. Rapamycin 5mg/week"
+                  className="w-full bg-slate-50 dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-slate-900 dark:text-white text-xs px-3 py-2.5 rounded-lg focus:outline-none focus:border-emerald-500 transition font-sans placeholder:text-slate-400 dark:placeholder:text-neutral-500"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] uppercase font-mono font-bold text-slate-500 dark:text-neutral-400 tracking-wider block">Start Visit</label>
+                <select
+                  value={newIntervention.start_date}
+                  onChange={e => setNewIntervention(p => ({ ...p, start_date: e.target.value }))}
+                  className="w-full bg-slate-50 dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-slate-900 dark:text-white text-xs px-3 py-2.5 rounded-lg focus:outline-none focus:border-emerald-500 transition font-sans"
+                >
+                  {["Month 0","Month 3","Month 6","Month 9","Month 12","Month 18"].map(m => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {interventionError && (
+              <p className="text-xs text-rose-500 font-mono bg-rose-500/10 border border-rose-500/20 px-3 py-2 rounded-lg">{interventionError}</p>
+            )}
+
+            <div className="flex gap-3 pt-1">
+              <button
+                onClick={handleAddIntervention}
+                disabled={addingIntervention || !newIntervention.name.trim()}
+                className="flex-1 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white text-xs font-bold py-2.5 rounded-lg transition font-mono uppercase tracking-wider"
+              >
+                {addingIntervention ? "Adding..." : "Add Intervention"}
+              </button>
+              <button
+                onClick={() => { setShowAddIntervention(false); setInterventionError(null); }}
+                className="px-4 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 dark:hover:bg-neutral-700 text-slate-700 dark:text-neutral-300 text-xs font-bold py-2.5 rounded-lg transition font-mono uppercase tracking-wider border border-slate-200 dark:border-neutral-700"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Footer Branding */}
-      <footer className="border-t border-neutral-900 bg-neutral-950 py-6 text-center text-xs text-neutral-500">
+      <footer className="border-t border-slate-200 dark:border-neutral-900 bg-slate-50 dark:bg-neutral-950 py-6 text-center text-xs text-slate-500 dark:text-neutral-500">
         <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <span>&copy; 2026 ChronosLayer Medical Systems. Core Diagnostics Page active.</span>
           <div className="flex gap-4 text-[11.5px] font-mono">
-            <span className="text-neutral-500">FastAPI backend online</span>
-            <span className="text-neutral-500">Database SQLite integrated</span>
+            <span className="text-slate-500 dark:text-neutral-500">FastAPI backend online</span>
+            <span className="text-slate-500 dark:text-neutral-500">Database SQLite integrated</span>
           </div>
         </div>
       </footer>
