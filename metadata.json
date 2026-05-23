@@ -1,0 +1,6 @@
+{
+  "name": "ChronosLayer Scaffold",
+  "description": "ChronosLayer longevity clinic project scaffold featuring Next.js 14 frontend and FastAPI backend with SQLAlchemy.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

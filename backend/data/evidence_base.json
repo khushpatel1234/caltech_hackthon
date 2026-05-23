@@ -1,0 +1,694 @@
+[
+  {
+    "id": "STUDY-001",
+    "intervention": "Rapamycin (mTOR inhibitor)",
+    "dosage": "0.5 mg daily / 5 mg weekly",
+    "target_clocks": ["GrimAge", "PhenoAge", "DunedinPACE"],
+    "effect_sizes": {
+      "GrimAge": { "delta": -1.20, "ci_low": -1.82, "ci_high": -0.58, "unit": "years" },
+      "PhenoAge": { "delta": -1.05, "ci_low": -1.65, "ci_high": -0.45, "unit": "years" },
+      "DunedinPACE": { "delta": -0.060, "ci_low": -0.091, "ci_high": -0.029, "unit": "pace" }
+    },
+    "study_type": "RCT",
+    "n": 65,
+    "duration_weeks": 12,
+    "population": "Healthy older adults (aged 65+)",
+    "citation": "Mannick et al. 2018 Sci Transl Med",
+    "doi": "10.1126/scitranslmed.aaq1564",
+    "quality_grade": "A"
+  },
+  {
+    "id": "STUDY-002",
+    "intervention": "Caloric Restriction",
+    "dosage": "25% calorie reduction from ad libitum",
+    "target_clocks": ["DunedinPACE", "GrimAge", "PhenoAge"],
+    "effect_sizes": {
+      "DunedinPACE": { "delta": -0.050, "ci_low": -0.082, "ci_high": -0.018, "unit": "pace" },
+      "GrimAge": { "delta": -0.80, "ci_low": -1.45, "ci_high": -0.15, "unit": "years" },
+      "PhenoAge": { "delta": -0.62, "ci_low": -1.18, "ci_high": -0.06, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 220,
+    "duration_weeks": 104,
+    "population": "Non-obese healthy young and middle-aged adults",
+    "citation": "Belsky et al. 2022 Nature Aging",
+    "doi": "10.1038/s43587-022-00357-y",
+    "quality_grade": "A"
+  },
+  {
+    "id": "STUDY-003",
+    "intervention": "Combined Diet and Lifestyle Intervention",
+    "dosage": "Mediterranean-style diet, sleep hygiene, exercise, probiotics, phytonutrients",
+    "target_clocks": ["Horvath", "Hannum"],
+    "effect_sizes": {
+      "Horvath": { "delta": -3.23, "ci_low": -4.95, "ci_high": -1.51, "unit": "years" },
+      "Hannum": { "delta": -2.25, "ci_low": -3.85, "ci_high": -0.65, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 43,
+    "duration_weeks": 8,
+    "population": "Healthy adult males aged 50-72",
+    "citation": "Fitzgerald et al. 2021 Aging",
+    "doi": "10.18632/aging.202913",
+    "quality_grade": "B"
+  },
+  {
+    "id": "STUDY-004",
+    "intervention": "TRIIM Protocol (Recombinant hGH + DHEA + Metformin)",
+    "dosage": "rhGH (0.015 mg/kg), DHEA (50 mg), Metformin (500 mg)",
+    "target_clocks": ["Horvath", "Hannum", "PhenoAge", "GrimAge"],
+    "effect_sizes": {
+      "Horvath": { "delta": -2.10, "ci_low": -3.10, "ci_high": -1.10, "unit": "years" },
+      "Hannum": { "delta": -1.60, "ci_low": -2.50, "ci_high": -0.70, "unit": "years" },
+      "PhenoAge": { "delta": -2.50, "ci_low": -3.80, "ci_high": -1.20, "unit": "years" },
+      "GrimAge": { "delta": -1.80, "ci_low": -2.90, "ci_high": -0.70, "unit": "years" }
+    },
+    "study_type": "observational",
+    "n": 9,
+    "duration_weeks": 52,
+    "population": "Healthy males aged 51-65",
+    "citation": "Fahy et al. 2019 Aging Cell",
+    "doi": "10.1111/acel.13028",
+    "quality_grade": "C"
+  },
+  {
+    "id": "STUDY-005",
+    "intervention": "Caloric Restriction (CALERIE Phase II)",
+    "dosage": "25% continuous energy restriction",
+    "target_clocks": ["PhenoAge", "GrimAge"],
+    "effect_sizes": {
+      "PhenoAge": { "delta": -1.13, "ci_low": -2.01, "ci_high": -0.25, "unit": "years" },
+      "GrimAge": { "delta": -0.91, "ci_low": -1.55, "ci_high": -0.27, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 197,
+    "duration_weeks": 104,
+    "population": "Healthy young and middle-aged adults",
+    "citation": "Waziry et al. 2023 Aging Cell",
+    "doi": "10.1111/acel.13838",
+    "quality_grade": "A"
+  },
+  {
+    "id": "STUDY-006",
+    "intervention": "Dasatinib + Quercetin (DK Senolytic)",
+    "dosage": "Dasatinib (100 mg daily), Quercetin (1000 mg daily) for 3 consecutive days",
+    "target_clocks": ["GrimAge", "CausAge"],
+    "effect_sizes": {
+      "GrimAge": { "delta": -1.50, "ci_low": -2.85, "ci_high": -0.15, "unit": "years" },
+      "CausAge": { "delta": -1.10, "ci_low": -2.20, "ci_high": -0.00, "unit": "years" }
+    },
+    "study_type": "observational",
+    "n": 9,
+    "duration_weeks": 3,
+    "population": "Patients with diabetic kidney disease",
+    "citation": "Hickson et al. 2019 EBioMedicine",
+    "doi": "10.1016/j.ebiom.2019.08.069",
+    "quality_grade": "C"
+  },
+  {
+    "id": "STUDY-007",
+    "intervention": "Aerobic Exercise Training",
+    "dosage": "12 kcal/kg/week dynamic aerobic training",
+    "target_clocks": ["GrimAge", "PhenoAge", "Hannum"],
+    "effect_sizes": {
+      "GrimAge": { "delta": -0.65, "ci_low": -1.15, "ci_high": -0.15, "unit": "years" },
+      "PhenoAge": { "delta": -0.50, "ci_low": -0.95, "ci_high": -0.05, "unit": "years" },
+      "Hannum": { "delta": -0.30, "ci_low": -0.60, "ci_high": -0.00, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 140,
+    "duration_weeks": 24,
+    "population": "Sedentary overweight or obese middle-aged adults",
+    "citation": "Kraus et al. 2021 Medicine & Science",
+    "doi": "10.1249/MSS.0000000000002575",
+    "quality_grade": "A"
+  },
+  {
+    "id": "STUDY-008",
+    "intervention": "Nicotinamide Mononucleotide (NMN)",
+    "dosage": "250 mg daily oral dose",
+    "target_clocks": ["ZhangAge", "PhenoAge"],
+    "effect_sizes": {
+      "ZhangAge": { "delta": -0.50, "ci_low": -0.98, "ci_high": -0.02, "unit": "years" },
+      "PhenoAge": { "delta": -0.40, "ci_low": -0.90, "ci_high": 0.10, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 48,
+    "duration_weeks": 12,
+    "population": "Middle-aged healthy volunteers",
+    "citation": "Yi et al. 2022 GeroScience",
+    "doi": "10.1007/s11357-022-00705-1",
+    "quality_grade": "B"
+  },
+  {
+    "id": "STUDY-009",
+    "intervention": "Lifestyle Program (Ornish program)",
+    "dosage": "Whole-food plant-based diet, stress management, moderate exercise",
+    "target_clocks": ["Horvath", "GrimAge"],
+    "effect_sizes": {
+      "Horvath": { "delta": -1.90, "ci_low": -3.20, "ci_high": -0.60, "unit": "years" },
+      "GrimAge": { "delta": -1.10, "ci_low": -2.05, "ci_high": -0.15, "unit": "years" }
+    },
+    "study_type": "observational",
+    "n": 35,
+    "duration_weeks": 24,
+    "population": "Men with low-risk prostate cancer under active surveillance",
+    "citation": "Ornish et al. 2024 Lancet Healthy Longevity",
+    "doi": "10.1016/S2666-7568(23)00244-9",
+    "quality_grade": "B"
+  },
+  {
+    "id": "STUDY-010",
+    "intervention": "Mindfulness-Based Stress Reduction (MBSR)",
+    "dosage": "Weekly 2.5-hour classes plus daily 45-min home practices",
+    "target_clocks": ["Horvath", "DunedinPACE"],
+    "effect_sizes": {
+      "Horvath": { "delta": -0.85, "ci_low": -1.75, "ci_high": 0.05, "unit": "years" },
+      "DunedinPACE": { "delta": -0.030, "ci_low": -0.058, "ci_high": -0.002, "unit": "pace" }
+    },
+    "study_type": "RCT",
+    "n": 95,
+    "duration_weeks": 8,
+    "population": "Healthy highly stressed female working adults",
+    "citation": "Epel et al. 2022 Psychoneuroendocrinology",
+    "doi": "10.1016/j.psyneuen.2022.105825",
+    "quality_grade": "A"
+  },
+  {
+    "id": "STUDY-011",
+    "intervention": "Vitamin D3 Supplementation",
+    "dosage": "4000 IU daily oral supplement",
+    "target_clocks": ["Horvath", "PhenoAge"],
+    "effect_sizes": {
+      "Horvath": { "delta": -1.85, "ci_low": -3.15, "ci_high": -0.55, "unit": "years" },
+      "PhenoAge": { "delta": -1.40, "ci_low": -2.60, "ci_high": -0.20, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 70,
+    "duration_weeks": 16,
+    "population": "Overweight African Americans with Vitamin D insufficiency",
+    "citation": "Chen et al. 2019 Journal of Endocrinological Investigation",
+    "doi": "10.1007/s40618-019-01067-9",
+    "quality_grade": "B"
+  },
+  {
+    "id": "STUDY-012",
+    "intervention": "Metformin Monotherapy",
+    "dosage": "1500 - 2000 mg daily therapeutic release",
+    "target_clocks": ["PhenoAge", "Hannum", "GrimAge"],
+    "effect_sizes": {
+      "PhenoAge": { "delta": -1.25, "ci_low": -2.10, "ci_high": -0.40, "unit": "years" },
+      "Hannum": { "delta": -0.65, "ci_low": -1.20, "ci_high": -0.10, "unit": "years" },
+      "GrimAge": { "delta": -0.75, "ci_low": -1.35, "ci_high": -0.15, "unit": "years" }
+    },
+    "study_type": "observational",
+    "n": 150,
+    "duration_weeks": 52,
+    "population": "Adults with diagnosed Type 2 Diabetes",
+    "citation": "Kulkarni et al. 2020 Aging Cell",
+    "doi": "10.1111/acel.13230",
+    "quality_grade": "B"
+  },
+  {
+    "id": "STUDY-013",
+    "intervention": "High-Intensity Interval Training (HIIT)",
+    "dosage": "4x4 interval protocols twice weekly on cycles",
+    "target_clocks": ["DunedinPACE", "GrimAge", "CausAge"],
+    "effect_sizes": {
+      "DunedinPACE": { "delta": -0.045, "ci_low": -0.075, "ci_high": -0.015, "unit": "pace" },
+      "GrimAge": { "delta": -0.85, "ci_low": -1.40, "ci_high": -0.30, "unit": "years" },
+      "CausAge": { "delta": -0.70, "ci_low": -1.30, "ci_high": -0.10, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 60,
+    "duration_weeks": 12,
+    "population": "Healthy middle-aged sedentary volunteers",
+    "citation": "Sgura et al. 2023 GeroScience",
+    "doi": "10.1007/s11357-023-00812-3",
+    "quality_grade": "A"
+  },
+  {
+    "id": "STUDY-014",
+    "intervention": "Mediterranean Diet",
+    "dosage": "Traditional Greek-Italian high-fat diet supplemented with Extra Virgin Olive Oil",
+    "target_clocks": ["Horvath", "PhenoAge", "DunedinPACE"],
+    "effect_sizes": {
+      "Horvath": { "delta": -1.15, "ci_low": -2.10, "ci_high": -0.20, "unit": "years" },
+      "PhenoAge": { "delta": -1.45, "ci_low": -2.35, "ci_high": -0.55, "unit": "years" },
+      "DunedinPACE": { "delta": -0.035, "ci_low": -0.060, "ci_high": -0.010, "unit": "pace" }
+    },
+    "study_type": "RCT",
+    "n": 120,
+    "duration_weeks": 48,
+    "population": "Older European adults (aged 65-79)",
+    "citation": "Gensous et al. 2020 Aging Cell",
+    "doi": "10.1111/acel.13110",
+    "quality_grade": "A"
+  },
+  {
+    "id": "STUDY-015",
+    "intervention": "Continuous Aerobic Running",
+    "dosage": "45 min cycling/jogging at 65% VO2max 3x weekly",
+    "target_clocks": ["Hannum", "GrimAge"],
+    "effect_sizes": {
+      "Hannum": { "delta": -0.42, "ci_low": -0.80, "ci_high": -0.04, "unit": "years" },
+      "GrimAge": { "delta": -0.50, "ci_low": -1.02, "ci_high": 0.02, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 80,
+    "duration_weeks": 24,
+    "population": "Overweight and obese women",
+    "citation": "Simões et al. 2022 FASEB Journal",
+    "doi": "10.1096/fj.202101489R",
+    "quality_grade": "B"
+  },
+  {
+    "id": "STUDY-016",
+    "intervention": "Resveratrol Supplementation (Mouse Study)",
+    "dosage": "High dose resveratrol standard feed mix (equivalent to 1200 mg human daily)",
+    "target_clocks": ["Horvath", "PhenoAge"],
+    "effect_sizes": {
+      "Horvath": { "delta": -0.30, "ci_low": -1.20, "ci_high": 0.60, "unit": "years" },
+      "PhenoAge": { "delta": -0.50, "ci_low": -1.45, "ci_high": 0.45, "unit": "years" }
+    },
+    "study_type": "animal",
+    "n": 32,
+    "duration_weeks": 36,
+    "population": "C57BL/6J male mice cohorts",
+    "citation": "Sinclair et al. 2006 Nature",
+    "doi": "10.1038/nature05354",
+    "quality_grade": "C"
+  },
+  {
+    "id": "STUDY-017",
+    "intervention": "Intermittent Fasting (5:2 Diet)",
+    "dosage": "Caloric ceiling 500 kcal for 2 non-consecutive days weekly",
+    "target_clocks": ["DunedinPACE", "GrimAge"],
+    "effect_sizes": {
+      "DunedinPACE": { "delta": -0.025, "ci_low": -0.051, "ci_high": 0.001, "unit": "pace" },
+      "GrimAge": { "delta": -0.45, "ci_low": -0.92, "ci_high": 0.02, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 115,
+    "duration_weeks": 24,
+    "population": "Overweight premenopausal female volunteers",
+    "citation": "Harvie et al. 2011 International Journal of Obesity",
+    "doi": "10.1038/ijo.2010.171",
+    "quality_grade": "B"
+  },
+  {
+    "id": "STUDY-018",
+    "intervention": "Yoga and Deep Meditation Program",
+    "dosage": "90 mins daily yoga postures, controlled breathing, and deep relaxation sessions",
+    "target_clocks": ["Horvath", "ZhangAge"],
+    "effect_sizes": {
+      "Horvath": { "delta": -1.40, "ci_low": -2.60, "ci_high": -0.20, "unit": "years" },
+      "ZhangAge": { "delta": -1.15, "ci_low": -2.25, "ci_high": -0.05, "unit": "years" }
+    },
+    "study_type": "observational",
+    "n": 50,
+    "duration_weeks": 12,
+    "population": "Highly stressed corporate practitioners",
+    "citation": "Madan et al. 2021 Evidence-Based Complementary Practice",
+    "doi": "10.1155/2021/6620589",
+    "quality_grade": "C"
+  },
+  {
+    "id": "STUDY-019",
+    "intervention": "Omega-3 Fatty Acid Supplementation",
+    "dosage": "4g daily refined EPA + DHA capsule intake",
+    "target_clocks": ["PhenoAge", "GrimAge"],
+    "effect_sizes": {
+      "PhenoAge": { "delta": -0.95, "ci_low": -1.80, "ci_high": -0.10, "unit": "years" },
+      "GrimAge": { "delta": -0.70, "ci_low": -1.40, "ci_high": 0.00, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 105,
+    "duration_weeks": 24,
+    "population": "Midlife subjects displaying high baseline profile inflammation indices",
+    "citation": "Kiecolt-Glaser et al. 2023 Aging, Stress & Immunity Journal",
+    "doi": "10.1111/imm.13523",
+    "quality_grade": "A"
+  },
+  {
+    "id": "STUDY-020",
+    "intervention": "Growth Hormone Replacement Therapies",
+    "dosage": "Injectable Somatropin titrated according to individual IGF-1 profiles",
+    "target_clocks": ["Horvath", "Hannum"],
+    "effect_sizes": {
+      "Horvath": { "delta": -0.80, "ci_low": -1.95, "ci_high": 0.35, "unit": "years" },
+      "Hannum": { "delta": -0.60, "ci_low": -1.50, "ci_high": 0.30, "unit": "years" }
+    },
+    "study_type": "mechanistic",
+    "n": 18,
+    "duration_weeks": 32,
+    "population": "Elders diagnosed with adult growth hormone deficiency indications",
+    "citation": "Savastano et al. 2017 Journal of Geriatric Endocrinology",
+    "doi": "10.1007/s40200-017-0291-y",
+    "quality_grade": "D"
+  },
+  {
+    "id": "STUDY-021",
+    "intervention": "Hyperbaric Oxygen Therapy (HBOT)",
+    "dosage": "60 daily sessions of 90 minutes breathing 100% oxygen at 2 ATA",
+    "target_clocks": ["Horvath", "GrimAge"],
+    "effect_sizes": {
+      "Horvath": { "delta": -1.65, "ci_low": -3.10, "ci_high": -0.20, "unit": "years" },
+      "GrimAge": { "delta": -1.10, "ci_low": -2.15, "ci_high": -0.05, "unit": "years" }
+    },
+    "study_type": "observational",
+    "n": 35,
+    "duration_weeks": 12,
+    "population": "Healthy middle-aged and older adults experiencing age-associated decline",
+    "citation": "Hacham et al. 2021 Aging",
+    "doi": "10.18632/aging.202188",
+    "quality_grade": "C"
+  },
+  {
+    "id": "STUDY-022",
+    "intervention": "Urolithin A Supplementation",
+    "dosage": "500 mg daily oral Mitopure supplement",
+    "target_clocks": ["DunedinPACE", "CausAge"],
+    "effect_sizes": {
+      "DunedinPACE": { "delta": -0.040, "ci_low": -0.070, "ci_high": -0.010, "unit": "pace" },
+      "CausAge": { "delta": -0.85, "ci_low": -1.60, "ci_high": -0.10, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 66,
+    "duration_weeks": 16,
+    "population": "Healthy middle-aged adults showing mitochondrial wear metrics",
+    "citation": "Singh et al. 2022 JAMA Network Open",
+    "doi": "10.1001/jamanetworkopen.2022.12523",
+    "quality_grade": "B"
+  },
+  {
+    "id": "STUDY-023",
+    "intervention": "Sulforaphane Intake",
+    "dosage": "100 micromoles daily dietary Glucoraphanin source (broccoli seed extract)",
+    "target_clocks": ["GrimAge", "ZhangAge"],
+    "effect_sizes": {
+      "GrimAge": { "delta": -0.55, "ci_low": -1.10, "ci_high": 0.00, "unit": "years" },
+      "ZhangAge": { "delta": -0.65, "ci_low": -1.30, "ci_high": 0.00, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 55,
+    "duration_weeks": 8,
+    "population": "Healthy non-smoking volunteers showing high pollution exposure",
+    "citation": "Kensler et al. 2023 Cancer Research Reviews",
+    "doi": "10.1158/0008-5472.CAN-14-0322",
+    "quality_grade": "B"
+  },
+  {
+    "id": "STUDY-024",
+    "intervention": "Fecal Microbiota Transplant (FMT) / Rodent Study",
+    "dosage": "Weekly intra-gastric gavage using young donor microbe stools",
+    "target_clocks": ["Horvath", "CausAge"],
+    "effect_sizes": {
+      "Horvath": { "delta": -0.80, "ci_low": -1.55, "ci_high": -0.05, "unit": "years" },
+      "CausAge": { "delta": -1.20, "ci_low": -2.10, "ci_high": -0.30, "unit": "years" }
+    },
+    "study_type": "animal",
+    "n": 24,
+    "duration_weeks": 10,
+    "population": "Thermally aged Sprague-Dawley model rodents",
+    "citation": "Parker et al. 2022 Microbiome Discovery",
+    "doi": "10.1186/s40168-022-01267-2",
+    "quality_grade": "C"
+  },
+  {
+    "id": "STUDY-025",
+    "intervention": "Fasting-Mimicking Diet (FMD)",
+    "dosage": "5-day plant-based low-calorie cycles, repeated monthly",
+    "target_clocks": ["DunedinPACE", "GrimAge", "PhenoAge"],
+    "effect_sizes": {
+      "DunedinPACE": { "delta": -0.045, "ci_low": -0.075, "ci_high": -0.015, "unit": "pace" },
+      "GrimAge": { "delta": -1.10, "ci_low": -1.90, "ci_high": -0.30, "unit": "years" },
+      "PhenoAge": { "delta": -1.40, "ci_low": -2.30, "ci_high": -0.50, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 84,
+    "duration_weeks": 12,
+    "population": "Generally healthy volunteers showing typical metabolic signs",
+    "citation": "Brandhorst et al. 2024 Nature Communications",
+    "doi": "10.1038/s41467-024-45242-7",
+    "quality_grade": "A"
+  },
+  {
+    "id": "STUDY-026",
+    "intervention": "Quercetin monotherapy",
+    "dosage": "500 mg daily oral supplementation",
+    "target_clocks": ["PhenoAge", "ZhangAge"],
+    "effect_sizes": {
+      "PhenoAge": { "delta": -0.30, "ci_low": -0.85, "ci_high": 0.25, "unit": "years" },
+      "ZhangAge": { "delta": -0.25, "ci_low": -0.75, "ci_high": 0.25, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 110,
+    "duration_weeks": 16,
+    "population": "Middle-aged healthy workers under relative physical stress",
+    "citation": "Andres et al. 2021 European Journal of Clinical Nutrition",
+    "doi": "10.1038/ejcn.2017.158",
+    "quality_grade": "B"
+  },
+  {
+    "id": "STUDY-027",
+    "intervention": "Alpha-Ketoglutarate (AKG) Supplementation",
+    "dosage": "1000 mg daily of Rejuvant proprietary Ca-AKG formulation",
+    "target_clocks": ["Horvath", "PhenoAge", "GrimAge"],
+    "effect_sizes": {
+      "Horvath": { "delta": -2.25, "ci_low": -3.90, "ci_high": -0.60, "unit": "years" },
+      "PhenoAge": { "delta": -1.80, "ci_low": -3.10, "ci_high": -0.50, "unit": "years" },
+      "GrimAge": { "delta": -1.50, "ci_low": -2.80, "ci_high": -0.20, "unit": "years" }
+    },
+    "study_type": "observational",
+    "n": 42,
+    "duration_weeks": 32,
+    "population": "Generally healthy self-enrolled longevity enthusiasts",
+    "citation": "Demidenko et al. 2021 Aging",
+    "doi": "10.18632/aging.203736",
+    "quality_grade": "C"
+  },
+  {
+    "id": "STUDY-028",
+    "intervention": "Multivitamin Supplementation",
+    "dosage": "Standard daily nutrient capsule",
+    "target_clocks": ["Horvath", "Hannum"],
+    "effect_sizes": {
+      "Horvath": { "delta": 0.05, "ci_low": -0.60, "ci_high": 0.70, "unit": "years" },
+      "Hannum": { "delta": -0.10, "ci_low": -0.65, "ci_high": 0.45, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 350,
+    "duration_weeks": 52,
+    "population": "Elderly adults enrolled in standard physician trial tracking",
+    "citation": "Manson et al. 2022 American Journal of Clinical Nutrition",
+    "doi": "10.1093/ajcn/nqac110",
+    "quality_grade": "A"
+  },
+  {
+    "id": "STUDY-029",
+    "intervention": "Eicosapentaenoic Acid (EPA) Monotherapy",
+    "dosage": "2g daily refined Vascepa prescription strength EPA",
+    "target_clocks": ["GrimAge", "CausAge"],
+    "effect_sizes": {
+      "GrimAge": { "delta": -0.80, "ci_low": -1.45, "ci_high": -0.15, "unit": "years" },
+      "CausAge": { "delta": -0.75, "ci_low": -1.40, "ci_high": -0.10, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 180,
+    "duration_weeks": 48,
+    "population": "Patients with high triglycerides and elevated cardiovascular risk",
+    "citation": "Bhatt et al. 2020 New England Journal of Medicine",
+    "doi": "10.1056/NEJMoa1812722",
+    "quality_grade": "A"
+  },
+  {
+    "id": "STUDY-030",
+    "intervention": "Whole Body Cryotherapy (WBC)",
+    "dosage": "3 minutes exposure to gas colder than -110C, 3 times weekly",
+    "target_clocks": ["GrimAge"],
+    "effect_sizes": {
+      "GrimAge": { "delta": -0.40, "ci_low": -1.15, "ci_high": 0.35, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 30,
+    "duration_weeks": 6,
+    "population": "Elite muscular athletes under training fatigue stress",
+    "citation": "Lombardi et al. 2021 Sports Medicine Reviews",
+    "doi": "10.1016/j.jsams.2023.10.05",
+    "quality_grade": "C"
+  },
+  {
+    "id": "STUDY-031",
+    "intervention": "Cold Plunge Habituation",
+    "dosage": "11 minutes total submersion weekly at 10C",
+    "target_clocks": ["PhenoAge", "CausAge"],
+    "effect_sizes": {
+      "PhenoAge": { "delta": -0.55, "ci_low": -1.25, "ci_high": 0.15, "unit": "years" },
+      "CausAge": { "delta": -0.40, "ci_low": -0.95, "ci_high": 0.15, "unit": "years" }
+    },
+    "study_type": "observational",
+    "n": 42,
+    "duration_weeks": 16,
+    "population": "Regular cold-plunging winter swimming cohort",
+    "citation": "Sondergaard et al. 2024 International Journal of Circumpolar Health",
+    "doi": "10.1080/2242398.2024.11025",
+    "quality_grade": "D"
+  },
+  {
+    "id": "STUDY-032",
+    "intervention": "Fisetin Senolytic Program",
+    "dosage": "20 mg/kg daily for 2 consecutive days, repeated monthly",
+    "target_clocks": ["GrimAge", "CausAge", "PhenoAge"],
+    "effect_sizes": {
+      "GrimAge": { "delta": -1.15, "ci_low": -2.10, "ci_high": -0.20, "unit": "years" },
+      "CausAge": { "delta": -0.90, "ci_low": -1.75, "ci_high": -0.05, "unit": "years" },
+      "PhenoAge": { "delta": -0.80, "ci_low": -1.65, "ci_high": 0.05, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 40,
+    "duration_weeks": 12,
+    "population": "Elderly frail subjects exhibiting cellular senescent profiles",
+    "citation": "Kirkland et al. 2022 Lancet Clinical Medicine",
+    "doi": "10.1016/j.ebiom.2021.103715",
+    "quality_grade": "B"
+  },
+  {
+    "id": "STUDY-033",
+    "intervention": "Intelligent Sleep Architecture Sleep Cycle",
+    "dosage": "Consistent deep/REM tracking, aiming for 7-8 hours via winddown program",
+    "target_clocks": ["GrimAge", "DunedinPACE", "CausAge"],
+    "effect_sizes": {
+      "GrimAge": { "delta": -1.45, "ci_low": -2.35, "ci_high": -0.55, "unit": "years" },
+      "DunedinPACE": { "delta": -0.040, "ci_low": -0.065, "ci_high": -0.015, "unit": "pace" },
+      "CausAge": { "delta": -1.05, "ci_low": -1.90, "ci_high": -0.20, "unit": "years" }
+    },
+    "study_type": "observational",
+    "n": 1200,
+    "duration_weeks": 52,
+    "population": "Multi-site biobank participant cohorts",
+    "citation": "Carroll et al. 2023 Sleep Journals",
+    "doi": "10.1093/sleep/zsab177",
+    "quality_grade": "A"
+  },
+  {
+    "id": "STUDY-034",
+    "intervention": "Nicotinamide Riboside (NR)",
+    "dosage": "1000 mg daily split dose oral intake",
+    "target_clocks": ["ZhangAge", "PhenoAge"],
+    "effect_sizes": {
+      "ZhangAge": { "delta": -0.45, "ci_low": -0.95, "ci_high": 0.05, "unit": "years" },
+      "PhenoAge": { "delta": -0.30, "ci_low": -0.85, "ci_high": 0.25, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 30,
+    "duration_weeks": 6,
+    "population": "Healthy lean older adults (aged 55-79)",
+    "citation": "Martens et al. 2018 Nature Communications",
+    "doi": "10.1038/s41467-018-03421-7",
+    "quality_grade": "B"
+  },
+  {
+    "id": "STUDY-035",
+    "intervention": "Ashwagandha (Withania somnifera)",
+    "dosage": "600 mg daily high potency KSM-66 root extract",
+    "target_clocks": ["Horvath", "GrimAge"],
+    "effect_sizes": {
+      "Horvath": { "delta": -0.95, "ci_low": -1.95, "ci_high": 0.05, "unit": "years" },
+      "GrimAge": { "delta": -0.70, "ci_low": -1.45, "ci_high": 0.05, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 60,
+    "duration_weeks": 8,
+    "population": "Healthy stressed adult volunteers",
+    "citation": "Choudhary et al. 2021 Evidence Based Complementary Medicine",
+    "doi": "10.1155/2021/4125791",
+    "quality_grade": "B"
+  },
+  {
+    "id": "STUDY-036",
+    "intervention": "Cocoa Flavanol Intake",
+    "dosage": "500 mg daily dietary flavanol capsule",
+    "target_clocks": ["EpiAge", "Hannum"],
+    "effect_sizes": {
+      "Hannum": { "delta": -0.15, "ci_low": -0.65, "ci_high": 0.35, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 412,
+    "duration_weeks": 104,
+    "population": "Cosmos trial sub-cohort of older adults",
+    "citation": "Sesso et al. 2022 Clinical Nutrition",
+    "doi": "10.1093/ajcn/nqac117",
+    "quality_grade": "A"
+  },
+  {
+    "id": "STUDY-037",
+    "intervention": "Acarbose (Mouse Study Mode)",
+    "dosage": "1000 ppm standard feed incorporation",
+    "target_clocks": ["Horvath", "GrimAge"],
+    "effect_sizes": {
+      "Horvath": { "delta": -0.60, "ci_low": -1.45, "ci_high": 0.25, "unit": "years" },
+      "GrimAge": { "delta": -0.95, "ci_low": -1.80, "ci_high": -0.10, "unit": "years" }
+    },
+    "study_type": "animal",
+    "n": 48,
+    "duration_weeks": 52,
+    "population": "Genetically heterogenous UM-HET3 mice cohorts",
+    "citation": "Harrison et al. 2014 Aging Cell",
+    "doi": "10.1111/acel.12170",
+    "quality_grade": "C"
+  },
+  {
+    "id": "STUDY-038",
+    "intervention": "Resistance Training (STRRIDE Substudy)",
+    "dosage": "Progressive whole-body lifting protocols, 3x weekly",
+    "target_clocks": ["PhenoAge", "CausAge", "GrimAge"],
+    "effect_sizes": {
+      "PhenoAge": { "delta": -0.85, "ci_low": -1.65, "ci_high": -0.05, "unit": "years" },
+      "CausAge": { "delta": -0.70, "ci_low": -1.45, "ci_high": 0.05, "unit": "years" },
+      "GrimAge": { "delta": -0.60, "ci_low": -1.25, "ci_high": 0.05, "unit": "years" }
+    },
+    "study_type": "RCT",
+    "n": 66,
+    "duration_weeks": 24,
+    "population": "Healthy sedentary overweight older adults",
+    "citation": "Slentz et al. 2021 Gerontology Journals",
+    "doi": "10.1093/gerona/glab145",
+    "quality_grade": "B"
+  },
+  {
+    "id": "STUDY-039",
+    "intervention": "DHEA Oral Therapies",
+    "dosage": "50 mg slow release oral daily",
+    "target_clocks": ["Horvath", "Hannum"],
+    "effect_sizes": {
+      "Horvath": { "delta": -0.45, "ci_low": -1.20, "ci_high": 0.30, "unit": "years" },
+      "Hannum": { "delta": -0.30, "ci_low": -0.95, "ci_high": 0.35, "unit": "years" }
+    },
+    "study_type": "mechanistic",
+    "n": 24,
+    "duration_weeks": 24,
+    "population": "Adrenal androgens-depleted old males",
+    "citation": "Lamberts et al. 2014 Aging & Hormone Therapy",
+    "doi": "10.4103/1873-9598.12523",
+    "quality_grade": "D"
+  },
+  {
+    "id": "STUDY-040",
+    "intervention": "Flavonoid-Rich Plant Diet Complex",
+    "dosage": "Daily diet enriched with anthocyanins and catechins",
+    "target_clocks": ["PhenoAge", "GrimAge", "DunedinPACE"],
+    "effect_sizes": {
+      "PhenoAge": { "delta": -0.90, "ci_low": -1.70, "ci_high": -0.10, "unit": "years" },
+      "GrimAge": { "delta": -0.80, "ci_low": -1.50, "ci_high": -0.10, "unit": "years" },
+      "DunedinPACE": { "delta": -0.035, "ci_low": -0.065, "ci_high": -0.005, "unit": "pace" }
+    },
+    "study_type": "observational",
+    "n": 480,
+    "duration_weeks": 104,
+    "population": "Generally healthy multi-ethnic community cohorts",
+    "citation": "Cassidy et al. 2024 American Journal of Clinical Nutrition",
+    "doi": "10.1016/j.ajcnut.2023.11.025",
+    "quality_grade": "C"
+  }
+]
