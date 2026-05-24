@@ -58,6 +58,12 @@ const CLOCK_COLORS: Record<string, string> = {
   "CausAge": "#d946ef"      // pink-500
 };
 
+const DEFAULT_FOLLOW_UP_QUESTIONS = [
+  "How does Rapamycin lower GrimAge?",
+  "What does DunedinPACE measure?",
+  "Should we introduce Metformin?"
+];
+
 interface PatientPageProps {
   params: {
     id: string;
@@ -333,6 +339,11 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
 
   const { patient, clocks_panel, ai_interpretation } = data;
   const aiInterpretation = ai_interpretation;
+  const hasAiInterpretation = Boolean(
+    aiInterpretation?.clinical_summary ||
+    aiInterpretation?.biological_story ||
+    aiInterpretation?.recommendations?.length
+  );
   const chronoAge = patient.chronological_age;
   const lastVisitDate = patient.visits?.[patient.visits.length - 1]?.date || "N/A";
 
@@ -1506,12 +1517,12 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                   </div>
                 </div>
                 <span className="text-[9px] font-mono text-slate-600 dark:text-neutral-400 bg-slate-100 dark:bg-neutral-950 px-2 py-1 rounded-md border border-slate-200 dark:border-neutral-900">
-                  Ready
+                  {hasAiInterpretation ? "Ready" : "Limited"}
                 </span>
               </div>
 
               {/* Dynamic Content Status */}
-              {aiInterpretation ? (
+              {hasAiInterpretation ? (
                 <div className="space-y-6">
                   
                   {/* Clinician Interpretation Header/Summary */}
@@ -1675,9 +1686,16 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
 
                 </div>
               ) : (
-                <div className="h-[200px] flex flex-col items-center justify-center gap-3 bg-slate-50 dark:bg-neutral-950 p-6 rounded-xl border border-slate-200 dark:border-neutral-900">
-                  <div className="w-8 h-8 border-2 border-emerald-500/25 border-t-emerald-500 rounded-full animate-spin" />
-                  <span className="text-[10px] font-mono tracking-widest text-slate-500 dark:text-neutral-500 uppercase">Preloading Clinical Context...</span>
+                <div className="space-y-3 bg-slate-50 dark:bg-neutral-950/60 p-4 rounded-xl border border-slate-200 dark:border-neutral-900">
+                  <div className="flex items-center gap-2">
+                    <Info size={15} className="text-emerald-400 shrink-0" />
+                    <span className="text-[10px] font-mono tracking-widest text-slate-500 dark:text-neutral-500 uppercase font-bold">
+                      Limited Clinical Context
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-600 dark:text-neutral-400 leading-relaxed">
+                    Detailed AI interpretation is unavailable for this record. Follow-up consultation remains active using the patient's clock panel and evidence base.
+                  </p>
                 </div>
               )}
 
@@ -1692,7 +1710,9 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
 
                 {/* Answer logs */}
                 {followupHistory.length > 0 && (
-                  <div className="space-y-3.5 max-h-[220px] overflow-y-auto pr-1 border-b border-slate-200 dark:border-neutral-800 pb-4">
+                  <div className={`space-y-3.5 pr-1 border-b border-slate-200 dark:border-neutral-800 pb-4 ${
+                    followupHistory.length > 1 ? "max-h-[320px] overflow-y-auto" : "overflow-visible"
+                  }`}>
                     {followupHistory.map((item) => (
                       <div key={item.id} className="space-y-1.5 font-sans border-t border-slate-200 dark:border-neutral-900/60 first:border-0 pt-3 first:pt-0">
                         <div className="flex items-start gap-1.5 text-[11.5px] text-cyan-300 font-semibold leading-snug">
@@ -1733,11 +1753,7 @@ export default function PatientDetailPage({ params }: PatientPageProps) {
                 <div className="space-y-1.5">
                   <span className="text-[9px] font-mono text-slate-500 dark:text-neutral-500 block font-bold">Suggested Questions:</span>
                   <div className="flex flex-col gap-1.5">
-                    {(aiInterpretation?.follow_up_questions || [
-                      "How does Rapamycin lower GrimAge?",
-                      "What does DunedinPACE measure?",
-                      "Should we introduce Metformin?"
-                    ]).map((q: string, qIdx: number) => (
+                    {(aiInterpretation?.follow_up_questions || DEFAULT_FOLLOW_UP_QUESTIONS).map((q: string, qIdx: number) => (
                       <button
                         key={qIdx}
                         onClick={() => submitQuestion(q)}

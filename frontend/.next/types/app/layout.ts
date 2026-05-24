@@ -1,4 +1,4 @@
-// File: C:\Users\nachi\OneDrive\Desktop\caltech_hackthon\frontend\app\layout.tsx
+// File: /Users/khushpatel/Downloads/Chronos_Layer-main/frontend/app/layout.tsx
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

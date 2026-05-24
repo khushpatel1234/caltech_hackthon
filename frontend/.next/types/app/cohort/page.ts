@@ -1,4 +1,4 @@
-// File: C:\Users\nachi\OneDrive\Desktop\caltech_hackthon\frontend\app\cohort\page.tsx
+// File: /Users/khushpatel/Downloads/Chronos_Layer-main/frontend/app/cohort/page.tsx
 import * as entry from '../../../../app/cohort/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

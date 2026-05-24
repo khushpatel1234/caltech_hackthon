@@ -1,8 +1,12 @@
 import os
 import json
 import hashlib
+from pathlib import Path
 from typing import Dict, Any, List, Optional
 from anthropic import Anthropic
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 class ClinicalInterpreter:
     _cache = {}
@@ -10,6 +14,7 @@ class ClinicalInterpreter:
     def __init__(self):
         # Read API key from environment
         self.api_key = os.environ.get("ANTHROPIC_API_KEY")
+        self.model = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
         self.client = None
         if self.api_key:
             try:
@@ -470,7 +475,7 @@ Generate EXACTLY 3 items in the "recommendations" list. The "evidence_grade" mus
         if self.client:
             try:
                 message = self.client.messages.create(
-                    model="claude-sonnet-4-6",
+                    model=self.model,
                     max_tokens=2500,
                     system="You are an expert clinical longevity AI interpreter. You always output valid, parseable JSON matching the requested schema and nothing else.",
                     messages=[
@@ -492,61 +497,36 @@ Generate EXACTLY 3 items in the "recommendations" list. The "evidence_grade" mus
 
     def ask_followup(self, patient: Dict[str, Any], panel: Dict[str, Any], question: str) -> Dict[str, Any]:
         """Answers arbitrary clinician follow-up questions with full de-identified context preloaded."""
-        if patient.get("id") == "hero":
-            q_lower = question.lower()
-            if "dunedinpace" in q_lower or "pace" in q_lower or "why couldn't" in q_lower or "why didn't" in q_lower:
-                return {
-                    "answer": "DunedinPACE measures the active velocity of biological aging (pace of aging), whereas GrimAge and PhenoAge measure accumulated physiological damage. Rapamycin acts like a clean-up team that removes accumulated macromolecular damage and senescent secretory signatures (improving GrimAge from +3.1y to +0.4y), but it may not alter the foundational mitotic replicate clock rates. This biological dissociation is well-established in clinical trials: clearing accumulated cellular damage signs does not automatically slow the fundamental ticking speed of the DunedinPACE replicative pacemaker.",
-                    "suggested_actions": [
-                        "Introduce caloric restriction or caloric restriction mimetics (e.g., SGLT2 inhibitors like Empagliflozin).",
-                        "Implement a structured high-intensity interval training (HIIT) program to challenge foundational metabolic velocity."
-                    ]
-                }
-            elif "next" in q_lower or "add" in q_lower or "what should" in q_lower:
-                return {
-                    "answer": "To target the stubborn DunedinPACE rate of 1.08 while preserving the outstanding GrimAge gains, we recommend adding a non-overlapping therapeutic pathway. Introducing an SGLT2 inhibitor (like Empagliflozin 10mg/day) or a rigorous Caloric Restriction protocol has the strongest clinical trial support in human cohorts for reducing the pace of aging. Alternatively, initiating Metformin (1000mg/day) can help address metabolic drift and boost Phenotypic age recovery further.",
-                    "suggested_actions": [
-                        "Add Metformin 500mg daily, titrating to 1000mg/day as tolerated.",
-                        "Counsel patient on a 12-hour overnight fasting window combined with aerobic conditioning."
-                    ]
-                }
-            elif "plateau" in q_lower or "is the" in q_lower or "rapamycin effect" in q_lower:
-                return {
-                    "answer": "Not necessarily. The dramatic decrease in GrimAge acceleration (from +3.1y to +0.4y) represents a major clearance phase of epigenetic debris and systemic inflammation. Once this accumulated cellular damage is cleared, GrimAge is expected to stabilize near chronological age or slightly below it. This is a therapeutic success, not a plateau. However, to achieve further biological rejuvenation, adding therapies that target other clinical pathways (like AMPK/Metformin or Sirtuins) is recommended.",
-                    "suggested_actions": [
-                        "Maintain current weekly Rapamycin dosing at 6mg.",
-                        "Measure physiological inflammation markers (hs-CRP, IL-6) at the next 6-month interval."
-                    ]
-                }
-
         # Clean metadata extraction
         chrono_age = patient.get("chronological_age", 50.0)
         consensus_age = panel.get("consensus_age", chrono_age)
         accel = panel.get("acceleration", 0.0)
         clocks_list = [f"{k}: {v.get('value') if isinstance(v, dict) else v}" for k, v in panel.get("clocks", {}).items()]
 
-        system_instruction = f"""You are a board-certified clinical longevity AI copilot. 
+        context_prompt = f"""You are a board-certified clinical longevity AI copilot.
 You are discussing a Patient Case Study:
 - Demographics: Age {chrono_age}, Sex {patient.get('sex', 'Undisclosed')}, Ancestry {patient.get('ethnicity', 'Undisclosed')}, Lifestyle Score {patient.get('lifestyle_score', 5.0)}/10.
 - Clocks Panel: Consensus Bio-Age of {consensus_age:.1f} yr ({accel:+.1f} yr rate deviation).
 - Clocks values: {", ".join(clocks_list)}
 - Anomaly review: {panel.get('anomaly', {}).get('alert_text', 'None active')}
 
-Answer the clinician's follow-up questions in a professional, concise, scientific clinical tone. Be direct and link your analysis back to standard biological clocks of aging research (Horvath, GrimAge, DunedinPACE). Formulate your answer as a JSON block:
+Answer the clinician's follow-up question in a professional, concise, scientific clinical tone. Be direct and link your analysis back to standard biological clocks of aging research (Horvath, GrimAge, DunedinPACE). Do not invent lab values or diagnoses that are not in the case context. Formulate your answer as a JSON block:
 {{
   "answer": "Scientific answered details written clearly...",
   "suggested_actions": ["Action 1", "Action 2"]
 }}
+
+Clinician Question: {question}
 """
 
         if self.client:
             try:
                 message = self.client.messages.create(
-                    model="claude-sonnet-4-6",
+                    model=self.model,
                     max_tokens=1500,
-                    system="You are an expert clinical longevity copilot. You always output valid, parseable JSON matching the followup schema.",
+                    system="You are an expert clinical longevity copilot. You always output valid, parseable JSON matching the followup schema and no surrounding markdown.",
                     messages=[
-                        {"role": "user", "content": f"Clinician Question: {question}"}
+                        {"role": "user", "content": context_prompt}
                     ],
                     extra_headers={"User-Agent": "aistudio-build"}
                 )

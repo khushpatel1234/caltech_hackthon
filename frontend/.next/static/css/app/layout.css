@@ -821,6 +821,9 @@ video {
 .max-h-\[220px\] {
   max-height: 220px;
 }
+.max-h-\[320px\] {
+  max-height: 320px;
+}
 .min-h-screen {
   min-height: 100vh;
 }
@@ -1111,6 +1114,9 @@ video {
 }
 .overflow-hidden {
   overflow: hidden;
+}
+.overflow-visible {
+  overflow: visible;
 }
 .overflow-x-auto {
   overflow-x: auto;
